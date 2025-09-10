@@ -1,0 +1,31 @@
+name: form_maker
+description: "A comprehensive Flutter package for creating beautiful and functional forms with pre-built components like text fields, dropdowns, image pickers, and more."
+version: 0.0.1
+homepage: https://github.com/yourusername/form_maker
+repository: https://github.com/yourusername/form_maker
+issue_tracker: https://github.com/yourusername/form_maker/issues
+
+environment:
+  sdk: ^3.8.1
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cached_network_image: ^3.3.0
+  flutter_spinbox: ^0.13.1
+  flutter_switch: ^0.3.2
+  image_picker: ^1.0.4
+  multi_select_flutter: ^4.1.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  # This package supports all platforms
+  #         weight: 700
+  #
+  # For details regarding fonts in packages, see
+  # https://flutter.dev/to/font-from-package
