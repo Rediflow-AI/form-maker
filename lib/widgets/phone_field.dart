@@ -32,7 +32,9 @@ class _PhoneFieldState extends State<PhoneField> {
   @override
   void initState() {
     super.initState();
-    countryCodeController = TextEditingController(text: widget.defaultCountryCode ?? '+1');
+    countryCodeController = TextEditingController(
+      text: widget.defaultCountryCode ?? '+1',
+    );
     phoneController = TextEditingController(text: widget.defaultNumber ?? '');
   }
 
@@ -57,9 +59,7 @@ class _PhoneFieldState extends State<PhoneField> {
           child: TextFormField(
             controller: countryCodeController,
             enabled: widget.isEditable,
-            decoration: elegantInputDecoration(
-              hintText: '+1',
-            ),
+            decoration: elegantInputDecoration(hintText: '+1'),
             onChanged: (_) => _onChanged(),
             validator: widget.isRequired
                 ? (value) => value?.isEmpty == true ? 'Required' : null
@@ -87,7 +87,8 @@ class _PhoneFieldState extends State<PhoneField> {
                   }
                 : null,
             onSaved: (value) {
-              final fullNumber = '${countryCodeController.text}${phoneController.text}';
+              final fullNumber =
+                  '${countryCodeController.text}${phoneController.text}';
               widget.onSaved?.call(fullNumber);
             },
           ),

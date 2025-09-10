@@ -24,7 +24,8 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
   @override
   void initState() {
     super.initState();
-    hours = widget.workingHours ??
+    hours =
+        widget.workingHours ??
         [
           WorkingHour(day: 'Monday'),
           WorkingHour(day: 'Tuesday'),

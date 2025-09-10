@@ -41,10 +41,7 @@ class _ExpandableDropdownTextfieldState<T>
     return DropdownButtonFormField<T>(
       value: selectedValue,
       items: widget.items.map((T item) {
-        return DropdownMenuItem<T>(
-          value: item,
-          child: widget.builder(item),
-        );
+        return DropdownMenuItem<T>(value: item, child: widget.builder(item));
       }).toList(),
       onChanged: (T? newValue) {
         setState(() {
@@ -53,9 +50,7 @@ class _ExpandableDropdownTextfieldState<T>
         widget.onChanged?.call(newValue);
       },
       validator: widget.validator,
-      decoration: elegantInputDecoration(
-        prefix: Icon(widget.iconData),
-      ),
+      decoration: elegantInputDecoration(prefix: Icon(widget.iconData)),
     );
   }
 }

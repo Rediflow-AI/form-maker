@@ -61,7 +61,7 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
             children: [
               buildHeading(),
               SizedBox(height: 20),
-              
+
               // Basic Information
               nameFormEntry(
                 title: 'Restaurant Name',
@@ -69,28 +69,28 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
                 onSaved: (value) => name = value,
                 defaultValue: name,
               ),
-              
+
               emailFormEntry(
                 title: 'Contact Email',
                 subTitle: 'Primary email for contact',
                 onSaved: (value) => email = value,
                 defaultValue: email,
               ),
-              
+
               phoneFormEntry(
                 title: 'Phone Number',
                 subTitle: 'Contact phone number',
                 onSaved: (value) => phone = value,
                 defaultValue: phone,
               ),
-              
+
               // Address Information
               addressFormEntry(
                 title: 'Restaurant Address',
                 subTitle: 'Complete address of your restaurant',
                 defaultValue: address,
               ),
-              
+
               // Currency Selection
               currencyDropDownEntry(
                 title: 'Primary Currency',
@@ -98,17 +98,19 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
                 onChanged: (value) => currency = value,
                 defaultValue: currency,
               ),
-              
+
               // Food Mode Selection
               foodModeFormEntry(
                 title: 'Service Options',
                 subTitle: 'Select available service modes',
                 hasDelivery: hasDelivery,
                 hasSeating: hasSeating,
-                onDeliveryChanged: (value) => setState(() => hasDelivery = value ?? false),
-                onSeatingChanged: (value) => setState(() => hasSeating = value ?? true),
+                onDeliveryChanged: (value) =>
+                    setState(() => hasDelivery = value ?? false),
+                onSeatingChanged: (value) =>
+                    setState(() => hasSeating = value ?? true),
               ),
-              
+
               SizedBox(height: 30),
             ],
           ),
@@ -121,7 +123,7 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
   Future<void> save() async {
     if (widget.formKey.currentState?.validate() ?? false) {
       widget.formKey.currentState?.save();
-      
+
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -129,7 +131,7 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
           backgroundColor: Colors.green,
         ),
       );
-      
+
       // Print saved data for demo
       print('Saved Data:');
       print('Name: $name');

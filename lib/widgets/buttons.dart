@@ -40,7 +40,9 @@ class TertiaryIconButton extends StatelessWidget {
       onPressed: onPressed,
       icon: Icon(iconData),
       style: IconButton.styleFrom(
-        backgroundColor: onPressed != null ? primaryActiveColor.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+        backgroundColor: onPressed != null
+            ? primaryActiveColor.withOpacity(0.1)
+            : Colors.grey.withOpacity(0.1),
         foregroundColor: onPressed != null ? primaryActiveColor : Colors.grey,
       ),
     );

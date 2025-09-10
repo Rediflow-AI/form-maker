@@ -36,12 +36,4 @@ class WorkingHour {
   }
 }
 
-enum UserRoles {
-  Admin,
-  Owner,
-  Manager,
-  Staff,
-  Employee,
-  Customer,
-  Guest,
-}
+enum UserRoles { Admin, Owner, Manager, Staff, Employee, Customer, Guest }

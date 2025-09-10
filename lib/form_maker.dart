@@ -22,13 +22,14 @@ import 'widgets/phone_field.dart';
 import 'widgets/working_hours_selector.dart';
 
 abstract class InfoForm extends StatefulWidget {
-  InfoForm(
-      {super.key,
-      this.onImageSelected,
-      required this.formKey,
-      this.editFunctionality = false,
-      this.saveFunctionality = false,
-      this.onModified});
+  InfoForm({
+    super.key,
+    this.onImageSelected,
+    required this.formKey,
+    this.editFunctionality = false,
+    this.saveFunctionality = false,
+    this.onModified,
+  });
 
   final Function(File? image)? onImageSelected;
   final Function()? onModified;
@@ -57,10 +58,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
   Widget buildHeading() {
     return Row(
       children: [
-        Text(
-          heading,
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
+        Text(heading, style: Theme.of(context).textTheme.headlineMedium),
         if (widget.editFunctionality)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -125,17 +123,11 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         children: [
           Padding(
             padding: EdgeInsets.only(top: smallPadding, bottom: smallPadding),
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            child: Text(title, style: Theme.of(context).textTheme.titleLarge),
           ),
           Padding(
             padding: EdgeInsets.only(top: tinyPadding, bottom: tinyPadding),
-            child: Text(
-              subTitle,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+            child: Text(subTitle, style: Theme.of(context).textTheme.bodyLarge),
           ),
         ],
       ),
@@ -150,15 +142,13 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           labelColumnEntry(title!, subTitle!),
-          SizedBox(
-            width: largePadding,
-          ),
+          SizedBox(width: largePadding),
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(top: smallPadding),
               child: inputWidget,
             ),
-          )
+          ),
         ],
       ),
     );
@@ -199,7 +189,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                     Text(
                       'Change',
                       style: Theme.of(context).textTheme.titleLarge,
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -213,7 +203,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -251,12 +241,13 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     );
   }
 
-  Widget nameFormEntry(
-      {String title = 'Name',
-      String subTitle = 'the name',
-      Function(String?)? onSaved,
-      String? Function(String?)? validator,
-      String? defaultValue}) {
+  Widget nameFormEntry({
+    String title = 'Name',
+    String subTitle = 'the name',
+    Function(String?)? onSaved,
+    String? Function(String?)? validator,
+    String? defaultValue,
+  }) {
     return formEntry(
       title: title,
       subTitle: subTitle,
@@ -274,7 +265,8 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           hintText: 'Name',
           prefix: const Icon(Icons.person),
         ),
-        validator: validator ??
+        validator:
+            validator ??
             (value) => value!.isEmpty
                 ? 'Name is required'
                 : (value.isValidName() ? null : 'Invalid name'),
@@ -283,14 +275,15 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     );
   }
 
-  Widget emailFormEntry(
-      {String title = 'Email',
-      String subTitle = 'the email address',
-      Function(String?)? onSaved,
-      String? defaultValue,
-      bool verified = false,
-      bool showVerifyButton = true,
-      VoidCallback? onVerify}) {
+  Widget emailFormEntry({
+    String title = 'Email',
+    String subTitle = 'the email address',
+    Function(String?)? onSaved,
+    String? defaultValue,
+    bool verified = false,
+    bool showVerifyButton = true,
+    VoidCallback? onVerify,
+  }) {
     return formEntry(
       title: title,
       subTitle: subTitle,
@@ -360,14 +353,15 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     );
   }
 
-  Widget phoneFormEntry(
-      {String title = 'Phone',
-      String subTitle = 'the phone number',
-      Function(String?)? onSaved,
-      String? defaultValue,
-      bool verified = false,
-      bool showVerifyButton = true,
-      VoidCallback? onVerify}) {
+  Widget phoneFormEntry({
+    String title = 'Phone',
+    String subTitle = 'the phone number',
+    Function(String?)? onSaved,
+    String? defaultValue,
+    bool verified = false,
+    bool showVerifyButton = true,
+    VoidCallback? onVerify,
+  }) {
     return formEntry(
       title: title,
       subTitle: subTitle,
@@ -378,13 +372,17 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                   child: PhoneField(
                     isRequired: true,
                     isEditable: isEdit,
-                    defaultNumber: defaultValue != null &&
+                    defaultNumber:
+                        defaultValue != null &&
                             defaultValue.isNotEmpty &&
                             defaultValue.length > 10
                         ? defaultValue.substring(
-                            defaultValue.length - 10, defaultValue.length)
+                            defaultValue.length - 10,
+                            defaultValue.length,
+                          )
                         : null,
-                    defaultCountryCode: defaultValue != null &&
+                    defaultCountryCode:
+                        defaultValue != null &&
                             defaultValue.isNotEmpty &&
                             defaultValue.length > 10
                         ? defaultValue.substring(0, defaultValue.length - 10)
@@ -415,21 +413,27 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                   else
                     const Padding(
                       padding: EdgeInsets.only(left: 8.0),
-                      child:
-                          Icon(Icons.check_circle, color: Colors.transparent),
+                      child: Icon(
+                        Icons.check_circle,
+                        color: Colors.transparent,
+                      ),
                     ),
               ],
             )
           : PhoneField(
               isRequired: true,
               isEditable: isEdit,
-              defaultNumber: defaultValue != null &&
+              defaultNumber:
+                  defaultValue != null &&
                       defaultValue.isNotEmpty &&
                       defaultValue.length > 10
                   ? defaultValue.substring(
-                      defaultValue.length - 10, defaultValue.length)
+                      defaultValue.length - 10,
+                      defaultValue.length,
+                    )
                   : null,
-              defaultCountryCode: defaultValue != null &&
+              defaultCountryCode:
+                  defaultValue != null &&
                       defaultValue.isNotEmpty &&
                       defaultValue.length > 10
                   ? defaultValue.substring(0, defaultValue.length - 10)
@@ -476,65 +480,66 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     );
   }
 
-  Widget addressFormEntry(
-      {String title = 'Address',
-      String subTitle = 'the address',
-      // Function(String?)? onSaved,
-      Address? defaultValue}) {
+  Widget addressFormEntry({
+    String title = 'Address',
+    String subTitle = 'the address',
+    // Function(String?)? onSaved,
+    Address? defaultValue,
+  }) {
     return formEntry(
-        title: title,
-        subTitle: subTitle,
-        inputWidget: AddressField(
-          formKey: widget.formKey,
-          onModified: widget.onModified,
-          defaultValue: defaultValue,
-          isEdit: isEdit,
-        )
-        // inputWidget: Row(
-        //   children: [
-        //     Expanded(
-        //       child: TextFormField(
-        //         style: Theme.of(context).textTheme.bodyLarge,
-        //         controller: TextEditingController(text: defaultValue!.street),
-        //         onChanged: (_) {
-        //           widget.formKey.currentState!.save();
-        //           if (widget.onModified != null) {
-        //             widget.onModified!();
-        //           }
-        //         },
-        //         enabled: isEdit,
-        //         decoration: elegentInputDecoration(
-        //           hintText: 'Street',
-        //           prefix: const Icon(Icons.add_business_outlined),
-        //         ),
-        //         validator: (value) =>
-        //             value!.isEmpty ? 'Street is required' : null,
-        //         onSaved: (street) => defaultValue.street = street!,
-        //       ),
-        //     ),
-        //     SizedBox(width: smallPadding),
-        //     Expanded(
-        //       child: TextFormField(
-        //         style: Theme.of(context).textTheme.bodyLarge,
-        //         enabled: isEdit,
-        //         controller: TextEditingController(text: defaultValue.city),
-        //         onChanged: (_) {
-        //           widget.formKey.currentState!.save();
-        //           if (widget.onModified != null) {
-        //             widget.onModified!();
-        //           }
-        //         },
-        //         decoration: elegentInputDecoration(
-        //           hintText: 'City',
-        //           prefix: const Icon(Icons.location_on_outlined),
-        //         ),
-        //         validator: (value) => value!.isEmpty ? 'City is required' : null,
-        //         onSaved: (city) => defaultValue.city = city!,
-        //       ),
-        //     ),
-        //   ],
-        // ),
-        );
+      title: title,
+      subTitle: subTitle,
+      inputWidget: AddressField(
+        formKey: widget.formKey,
+        onModified: widget.onModified,
+        defaultValue: defaultValue,
+        isEdit: isEdit,
+      ),
+      // inputWidget: Row(
+      //   children: [
+      //     Expanded(
+      //       child: TextFormField(
+      //         style: Theme.of(context).textTheme.bodyLarge,
+      //         controller: TextEditingController(text: defaultValue!.street),
+      //         onChanged: (_) {
+      //           widget.formKey.currentState!.save();
+      //           if (widget.onModified != null) {
+      //             widget.onModified!();
+      //           }
+      //         },
+      //         enabled: isEdit,
+      //         decoration: elegentInputDecoration(
+      //           hintText: 'Street',
+      //           prefix: const Icon(Icons.add_business_outlined),
+      //         ),
+      //         validator: (value) =>
+      //             value!.isEmpty ? 'Street is required' : null,
+      //         onSaved: (street) => defaultValue.street = street!,
+      //       ),
+      //     ),
+      //     SizedBox(width: smallPadding),
+      //     Expanded(
+      //       child: TextFormField(
+      //         style: Theme.of(context).textTheme.bodyLarge,
+      //         enabled: isEdit,
+      //         controller: TextEditingController(text: defaultValue.city),
+      //         onChanged: (_) {
+      //           widget.formKey.currentState!.save();
+      //           if (widget.onModified != null) {
+      //             widget.onModified!();
+      //           }
+      //         },
+      //         decoration: elegentInputDecoration(
+      //           hintText: 'City',
+      //           prefix: const Icon(Icons.location_on_outlined),
+      //         ),
+      //         validator: (value) => value!.isEmpty ? 'City is required' : null,
+      //         onSaved: (city) => defaultValue.city = city!,
+      //       ),
+      //     ),
+      //   ],
+      // ),
+    );
   }
 
   Widget postalCodeFormEntry({
@@ -610,8 +615,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
       inputWidget: DropdownButtonFormField<String>(
         dropdownColor: Theme.of(context).primaryColor,
         style: Theme.of(context).textTheme.bodyLarge,
-        hint: Text('Select Cuisine Type',
-            style: Theme.of(context).textTheme.labelLarge),
+        hint: Text(
+          'Select Cuisine Type',
+          style: Theme.of(context).textTheme.labelLarge,
+        ),
         value: defaultValue,
         decoration: elegantInputDecoration(
           hintText: '',
@@ -619,10 +626,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         ),
         menuMaxHeight: 300,
         items: CUISINE_TYPES.map((String role) {
-          return DropdownMenuItem<String>(
-            value: role,
-            child: Text(role),
-          );
+          return DropdownMenuItem<String>(value: role, child: Text(role));
         }).toList(),
         onChanged: isEdit
             ? (value) {
@@ -716,28 +720,27 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     );
   }
 
-  Widget openDetailsFormEntry(
-          {String title = 'Open details',
-          String subTitle = 'Goto necessary details',
-          String hintText = 'Open details',
-          String displayText = '',
-          IconData icon = Icons.details,
-          GestureTapCallback? onTap}) =>
-      formEntry(
-        title: title,
-        subTitle: subTitle,
-        inputWidget: TextFormField(
-          decoration:
-              elegantInputDecoration(hintText: hintText, prefix: Icon(icon))
-                  .copyWith(
-            suffixIcon: const Icon(Icons.arrow_forward),
-          ),
-          controller: TextEditingController(text: displayText),
-          mouseCursor: SystemMouseCursors.click,
-          readOnly: true,
-          onTap: onTap,
-        ),
-      );
+  Widget openDetailsFormEntry({
+    String title = 'Open details',
+    String subTitle = 'Goto necessary details',
+    String hintText = 'Open details',
+    String displayText = '',
+    IconData icon = Icons.details,
+    GestureTapCallback? onTap,
+  }) => formEntry(
+    title: title,
+    subTitle: subTitle,
+    inputWidget: TextFormField(
+      decoration: elegantInputDecoration(
+        hintText: hintText,
+        prefix: Icon(icon),
+      ).copyWith(suffixIcon: const Icon(Icons.arrow_forward)),
+      controller: TextEditingController(text: displayText),
+      mouseCursor: SystemMouseCursors.click,
+      readOnly: true,
+      onTap: onTap,
+    ),
+  );
 
   Widget foodModeFormEntry({
     String title = 'Food Mode',
@@ -755,8 +758,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         children: [
           CheckboxListTile(
             visualDensity: VisualDensity.compact,
-            title:
-                Text('Dine-In', style: Theme.of(context).textTheme.bodyLarge),
+            title: Text(
+              'Dine-In',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
             value: hasSeating,
             enabled: isEdit,
             onChanged: (value) {
@@ -771,8 +776,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           CheckboxListTile(
             enabled: isEdit,
             visualDensity: VisualDensity.compact,
-            title:
-                Text('Delivery', style: Theme.of(context).textTheme.bodyLarge),
+            title: Text(
+              'Delivery',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
             value: hasDelivery,
             onChanged: (value) {
               onDeliveryChanged!(value);
@@ -815,11 +822,12 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     );
   }
 
-  Widget workingHoursFormEntry(
-      {String title = 'Working Hours',
-      String subTitle = 'the working hours',
-      Function(List<WorkingHour>)? onChanged,
-      List<WorkingHour>? defaultValue}) {
+  Widget workingHoursFormEntry({
+    String title = 'Working Hours',
+    String subTitle = 'the working hours',
+    Function(List<WorkingHour>)? onChanged,
+    List<WorkingHour>? defaultValue,
+  }) {
     return formEntry(
       title: title,
       subTitle: subTitle,
@@ -837,12 +845,13 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     );
   }
 
-  Widget roleFormEntry(
-      {String title = 'Role',
-      String subTitle = 'the role',
-      Function(UserRoles?)? onChanged,
-      UserRoles? defaultValue,
-      UserRoles? preDefinedRole}) {
+  Widget roleFormEntry({
+    String title = 'Role',
+    String subTitle = 'the role',
+    Function(UserRoles?)? onChanged,
+    UserRoles? defaultValue,
+    UserRoles? preDefinedRole,
+  }) {
     return formEntry(
       title: 'Select Role',
       subTitle: 'the role of the employee',
@@ -881,17 +890,19 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     );
   }
 
-  Widget categoryFormEntry(List<String> categories,
-      {String title = 'Category',
-      String subTitle = 'the category in which this meal will be placed',
-      String? hintText,
-      IconData iconData = Icons.category,
-      Function(String?)? onChanged,
-      String? defaultValue,
-      Function(bool expand)? onExpandChanged,
-      VoidCallback? onPressed,
-      FocusNode? focusNode,
-      Widget? suffix}) {
+  Widget categoryFormEntry(
+    List<String> categories, {
+    String title = 'Category',
+    String subTitle = 'the category in which this meal will be placed',
+    String? hintText,
+    IconData iconData = Icons.category,
+    Function(String?)? onChanged,
+    String? defaultValue,
+    Function(bool expand)? onExpandChanged,
+    VoidCallback? onPressed,
+    FocusNode? focusNode,
+    Widget? suffix,
+  }) {
     if (!categories.contains(defaultValue)) {
       defaultValue = null;
     }
@@ -914,25 +925,21 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                   Text(item, style: Theme.of(context).textTheme.bodyLarge),
             ),
           ),
-          if (suffix != null) ...[
-            SizedBox(
-              width: smallPadding,
-            ),
-            suffix,
-          ]
+          if (suffix != null) ...[SizedBox(width: smallPadding), suffix],
         ],
       ),
     );
   }
 
-  Widget descriptionFormEntry(
-      {String title = 'Description',
-      String subTitle =
-          'the description of your meal that will be displayed below the name',
-      Function(String?)? onSaved,
-      Function(String?)? onChanged,
-      int maxLines = 1,
-      String? defaultValue}) {
+  Widget descriptionFormEntry({
+    String title = 'Description',
+    String subTitle =
+        'the description of your meal that will be displayed below the name',
+    Function(String?)? onSaved,
+    Function(String?)? onChanged,
+    int maxLines = 1,
+    String? defaultValue,
+  }) {
     return formEntry(
       title: title,
       subTitle: subTitle,
@@ -964,98 +971,83 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     required List<String> items,
     String? Function(List<String>?)? validator,
     List<String>? defaultValues,
-  }) =>
-      formEntry(
-          title: title,
-          subTitle: subTitle,
-          inputWidget: MultiSelectDialogField<String>(
-            validator: validator,
-            items: items
-                .map((item) => MultiSelectItem<String>(item, item))
-                .toList(),
-            // title: Text("Animals"),
-            selectedColor: primaryCardColor,
-            separateSelectedItems: true,
-            selectedItemsTextStyle: subHeadingDark,
-            itemsTextStyle: subHeadingDark,
-            searchTextStyle: subHeadingDark,
-            decoration: BoxDecoration(
-              borderRadius: primaryBorderRadius,
-              border: Border.all(
-                color: primaryGray,
-                width: 0.6,
-              ),
-            ),
-            searchable: true,
-            confirmText: Text(
-              'Select',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            cancelText: Text(
-              'Cancel',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            dialogWidth: 800 * scalingFactor,
-            chipDisplay: MultiSelectChipDisplay(
-              items: items
-                  .map((item) => MultiSelectItem<String>(item, item))
-                  .toList(),
-              chipColor: primaryCardColor,
-              textStyle: subHeadingDark,
-              shape: RoundedRectangleBorder(
-                borderRadius: primaryBorderRadius,
-                side: const BorderSide(color: primaryGray, width: 0.6),
-              ),
-            ),
-            listType: MultiSelectListType.CHIP,
-            buttonIcon: const Icon(
-              Icons.list,
-            ),
-            buttonText: Text(
-              "Select",
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            onConfirm: onChanged,
-            initialValue: defaultValues ?? [],
-          ));
+  }) => formEntry(
+    title: title,
+    subTitle: subTitle,
+    inputWidget: MultiSelectDialogField<String>(
+      validator: validator,
+      items: items.map((item) => MultiSelectItem<String>(item, item)).toList(),
+      // title: Text("Animals"),
+      selectedColor: primaryCardColor,
+      separateSelectedItems: true,
+      selectedItemsTextStyle: subHeadingDark,
+      itemsTextStyle: subHeadingDark,
+      searchTextStyle: subHeadingDark,
+      decoration: BoxDecoration(
+        borderRadius: primaryBorderRadius,
+        border: Border.all(color: primaryGray, width: 0.6),
+      ),
+      searchable: true,
+      confirmText: Text('Select', style: Theme.of(context).textTheme.bodyLarge),
+      cancelText: Text('Cancel', style: Theme.of(context).textTheme.bodyLarge),
+      dialogWidth: 800 * scalingFactor,
+      chipDisplay: MultiSelectChipDisplay(
+        items: items
+            .map((item) => MultiSelectItem<String>(item, item))
+            .toList(),
+        chipColor: primaryCardColor,
+        textStyle: subHeadingDark,
+        shape: RoundedRectangleBorder(
+          borderRadius: primaryBorderRadius,
+          side: const BorderSide(color: primaryGray, width: 0.6),
+        ),
+      ),
+      listType: MultiSelectListType.CHIP,
+      buttonIcon: const Icon(Icons.list),
+      buttonText: Text("Select", style: Theme.of(context).textTheme.bodyLarge),
+      onConfirm: onChanged,
+      initialValue: defaultValues ?? [],
+    ),
+  );
 
-  Widget datePickerEntry(
-      {String title = 'Date',
-      String subTitle = 'the date',
-      Function(DateTime?)? onChanged,
-      DateTime? firstDate,
-      DateTime? lastDate,
-      Function? onPressed,
-      DateTime? defaultValue}) {
+  Widget datePickerEntry({
+    String title = 'Date',
+    String subTitle = 'the date',
+    Function(DateTime?)? onChanged,
+    DateTime? firstDate,
+    DateTime? lastDate,
+    Function? onPressed,
+    DateTime? defaultValue,
+  }) {
     return formEntry(
-        title: title,
-        subTitle: subTitle,
-        inputWidget: TertiaryFlatButton(
-            onPressed: () async {
-              onPressed?.call();
-              final DateTime? pickedDate = await showDatePicker(
-                context: context,
-                initialDate: defaultValue ?? firstDate,
-                firstDate: firstDate ?? DateTime(2021),
-                lastDate: lastDate ?? DateTime(2101),
-              );
-              onChanged?.call(pickedDate);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.watch_later_outlined),
-                SizedBox(
-                  width: smallPadding,
-                ),
-                Text(
-                  defaultValue != null
-                      ? '${defaultValue.day.toString().padLeft(2, '0')}-${defaultValue.month.toString().padLeft(2, '0')}-${defaultValue.year}'
-                      : 'Select date',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                )
-              ],
-            )));
+      title: title,
+      subTitle: subTitle,
+      inputWidget: TertiaryFlatButton(
+        onPressed: () async {
+          onPressed?.call();
+          final DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: defaultValue ?? firstDate,
+            firstDate: firstDate ?? DateTime(2021),
+            lastDate: lastDate ?? DateTime(2101),
+          );
+          onChanged?.call(pickedDate);
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.watch_later_outlined),
+            SizedBox(width: smallPadding),
+            Text(
+              defaultValue != null
+                  ? '${defaultValue.day.toString().padLeft(2, '0')}-${defaultValue.month.toString().padLeft(2, '0')}-${defaultValue.year}'
+                  : 'Select date',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget currencyDropDownEntry({
@@ -1063,16 +1055,15 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     String subTitle = 'Select the currency for your menu',
     Function(String?)? onChanged,
     String? defaultValue,
-  }) =>
-      categoryFormEntry(
-        Currencies.values
-            .map((currency_enum) => currency_enum.name.toUpperCase())
-            .toList(),
-        title: title,
-        subTitle: subTitle,
-        iconData: Icons.currency_exchange,
-        hintText: 'Select currency',
-        onChanged: onChanged,
-        defaultValue: defaultValue,
-      );
+  }) => categoryFormEntry(
+    Currencies.values
+        .map((currency_enum) => currency_enum.name.toUpperCase())
+        .toList(),
+    title: title,
+    subTitle: subTitle,
+    iconData: Icons.currency_exchange,
+    hintText: 'Select currency',
+    onChanged: onChanged,
+    defaultValue: defaultValue,
+  );
 }
