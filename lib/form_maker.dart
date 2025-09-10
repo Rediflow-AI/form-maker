@@ -58,10 +58,16 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
   Widget buildHeading() {
     return Row(
       children: [
-        Text(heading, style: Theme.of(context).textTheme.headlineMedium),
+        Expanded(
+          child: Text(
+            heading,
+            style: Theme.of(context).textTheme.headlineMedium,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
         if (widget.editFunctionality)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: TertiaryIconButton(
               onPressed: () {
                 setState(() {
@@ -71,10 +77,9 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
               iconData: isEdit ? Icons.edit : Icons.edit_off,
             ),
           ),
-        const Spacer(),
         if (widget.saveFunctionality)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: TertiaryIconButton(
               onPressed: isEdit ? () => save() : null,
               iconData: Icons.save,
