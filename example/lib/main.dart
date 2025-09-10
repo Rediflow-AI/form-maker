@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:form_maker/form_maker_library.dart';
 
@@ -13,13 +14,62 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ExampleFormPage(),
+      home: TabbedFormPage(),
     );
   }
 }
 
-class ExampleFormPage extends InfoForm {
-  ExampleFormPage({Key? key})
+class TabbedFormPage extends StatefulWidget {
+  @override
+  _TabbedFormPageState createState() => _TabbedFormPageState();
+}
+
+class _TabbedFormPageState extends State<TabbedFormPage> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Form Maker Example'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(icon: Icon(Icons.restaurant), text: 'Restaurant'),
+            Tab(icon: Icon(Icons.school), text: 'School'),
+            Tab(icon: Icon(Icons.person), text: 'User'),
+            Tab(icon: Icon(Icons.local_hospital), text: 'Hospital'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          RestaurantFormPage(),
+          SchoolFormPage(),
+          UserFormPage(),
+          HospitalFormPage(),
+        ],
+      ),
+    );
+  }
+}
+
+// Restaurant Form
+class RestaurantFormPage extends InfoForm {
+  RestaurantFormPage({Key? key})
       : super(
           key: key,
           formKey: GlobalKey<FormState>(),
@@ -28,7 +78,7 @@ class ExampleFormPage extends InfoForm {
         );
 
   @override
-  _ExampleFormPageState createState() => _ExampleFormPageState();
+  _RestaurantFormPageState createState() => _RestaurantFormPageState();
 }
 
 class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
@@ -43,6 +93,8 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
   List<String> selectedCuisines = [];
   List<String> selectedServices = [];
   Map<String, bool> selectedAmenities = {};
+  String? restaurantImageUrl; // For displaying existing image
+  List<File> restaurantGallery = []; // For multiple photos
 
   @override
   void initState() {
@@ -75,6 +127,26 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
             children: [
               buildHeading(),
               SizedBox(height: 20),
+
+              // Restaurant Photo
+              pictureFormEntry(
+                title: 'Restaurant Photo',
+                subTitle: 'Upload a photo of your restaurant',
+                defaultValue: restaurantImageUrl,
+              ),
+
+              // Restaurant Gallery - Multi Photo Selection
+              multiPhotoFormEntry(
+                title: 'Restaurant Gallery',
+                subTitle: 'Upload multiple photos of your restaurant (max 5)',
+                selectedImages: restaurantGallery,
+                onImagesSelected: (images) {
+                  setState(() {
+                    restaurantGallery = images;
+                  });
+                },
+                maxImages: 5,
+              ),
 
               // Basic Information
               nameFormEntry(
@@ -243,6 +315,11 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
       print('Has Delivery: $hasDelivery');
       print('Has Seating: $hasSeating');
       print('Amenities: $selectedAmenities');
+      print('Selected Image: ${selectedImage?.path ?? "No image selected"}');
+      print('Gallery Images: ${restaurantGallery.length} photos');
+      for (int i = 0; i < restaurantGallery.length; i++) {
+        print('  Photo ${i + 1}: ${restaurantGallery[i].path}');
+      }
     }
   }
 }

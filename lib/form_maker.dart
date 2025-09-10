@@ -379,19 +379,19 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                     isEditable: isEdit,
                     defaultNumber:
                         defaultValue != null &&
-                            defaultValue.isNotEmpty &&
-                            defaultValue.length > 10
-                        ? defaultValue.substring(
-                            defaultValue.length - 10,
-                            defaultValue.length,
-                          )
-                        : null,
+                                defaultValue.isNotEmpty &&
+                                defaultValue.length > 10
+                            ? defaultValue.substring(
+                                defaultValue.length - 10,
+                                defaultValue.length,
+                              )
+                            : null,
                     defaultCountryCode:
                         defaultValue != null &&
-                            defaultValue.isNotEmpty &&
-                            defaultValue.length > 10
-                        ? defaultValue.substring(0, defaultValue.length - 10)
-                        : null,
+                                defaultValue.isNotEmpty &&
+                                defaultValue.length > 10
+                            ? defaultValue.substring(0, defaultValue.length - 10)
+                            : null,
                     onChanged: (value) {
                       widget.formKey.currentState!.save();
                       if (widget.onModified != null) {
@@ -1276,6 +1276,112 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
             },
           );
         }).toList(),
+      ),
+    );
+  }
+
+  // Multi-photo selection form entry
+  Widget multiPhotoFormEntry({
+    String title = 'Photos',
+    String subTitle = 'Upload multiple photos',
+    List<File>? selectedImages,
+    Function(List<File>)? onImagesSelected,
+    int maxImages = 5,
+  }) {
+    selectedImages ??= [];
+    
+    return formEntry(
+      title: title,
+      subTitle: subTitle,
+      inputWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Display selected images
+          if (selectedImages.isNotEmpty)
+            Container(
+              height: 120,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: selectedImages.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: EdgeInsets.only(right: smallPadding),
+                    width: 100,
+                    height: 100,
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: primaryBorderRadius,
+                          child: Image.file(
+                            selectedImages![index],
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        if (isEdit)
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: GestureDetector(
+                              onTap: () {
+                                final updatedImages = List<File>.from(selectedImages!);
+                                updatedImages.removeAt(index);
+                                onImagesSelected?.call(updatedImages);
+                                widget.formKey.currentState?.save();
+                                widget.onModified?.call();
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          SizedBox(height: normalPadding),
+          // Add photo button
+          if (selectedImages.length < maxImages && isEdit)
+            SecondaryFlatButton(
+              onPressed: () async {
+                final ImagePicker picker = ImagePicker();
+                final List<XFile> images = await picker.pickMultiImage();
+                
+                if (images.isNotEmpty) {
+                  final newFiles = images.map((image) => File(image.path)).toList();
+                  final updatedImages = List<File>.from(selectedImages!)..addAll(newFiles);
+                  
+                  // Ensure we don't exceed max images
+                  if (updatedImages.length > maxImages) {
+                    updatedImages.removeRange(maxImages, updatedImages.length);
+                  }
+                  
+                  onImagesSelected?.call(updatedImages);
+                  widget.formKey.currentState?.save();
+                  widget.onModified?.call();
+                }
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add_photo_alternate),
+                  SizedBox(width: smallPadding),
+                  Text('Add Photos (${selectedImages.length}/$maxImages)'),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }
