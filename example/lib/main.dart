@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:form_maker/form_maker_library.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(MyApp());
@@ -86,6 +87,7 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
   String selectedCuisineType = "";
   File? selectedPhoto;
   List<File> selectedPhotos = [];
+  List<XFile> selectedXFilePhotos = []; // For web compatibility
   List<String> selectedServices = [];
 
   @override
@@ -191,6 +193,11 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
             onImagesSelected: (photos) {
               setState(() {
                 selectedPhotos = photos;
+              });
+            },
+            onXFilesSelected: (xFiles) {
+              setState(() {
+                selectedXFilePhotos = xFiles;
               });
             },
             maxImages: 5,

@@ -56,6 +56,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
 
   File? selectedImage;
   Uint8List? selectedImageBytes; // For web compatibility
+  List<XFile> _webSelectedImages = []; // For web multi-image support
 
   Future<void> save() async {}
 
@@ -217,7 +218,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                 child: Row(
                   children: [
                     Text(
-                      'Change',
+                      kIsWeb ? 'Select Image' : 'Change',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ],
@@ -1371,6 +1372,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     String subTitle = 'Upload multiple photos',
     List<File>? selectedImages,
     Function(List<File>)? onImagesSelected,
+    Function(List<XFile>)? onXFilesSelected, // For web compatibility
     int maxImages = 5,
   }) {
     selectedImages ??= [];
@@ -1382,12 +1384,12 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Display selected images
-          if (selectedImages.isNotEmpty)
+          if ((selectedImages.isNotEmpty) || (kIsWeb && _webSelectedImages.isNotEmpty))
             Container(
               height: 120,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: selectedImages.length,
+                itemCount: kIsWeb ? _webSelectedImages.length : selectedImages.length,
                 itemBuilder: (context, index) {
                   return Container(
                     margin: EdgeInsets.only(right: smallPadding),
@@ -1398,15 +1400,24 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: kIsWeb
-                              ? Container(
-                                  width: 100,
-                                  height: 100,
-                                  color: Colors.grey[300],
-                                  child: Icon(
-                                    Icons.image,
-                                    size: 40,
-                                    color: Colors.grey[600],
-                                  ),
+                              ? FutureBuilder<Uint8List>(
+                                  future: _webSelectedImages[index].readAsBytes(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Image.memory(
+                                        snapshot.data!,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      );
+                                    }
+                                    return Container(
+                                      width: 100,
+                                      height: 100,
+                                      color: Colors.grey[300],
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
                                 )
                               : Image.file(
                                   selectedImages![index],
@@ -1421,9 +1432,16 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                             right: 4,
                             child: GestureDetector(
                               onTap: () {
-                                final updatedImages = List<File>.from(selectedImages!);
-                                updatedImages.removeAt(index);
-                                onImagesSelected?.call(updatedImages);
+                                if (kIsWeb) {
+                                  final updatedXFiles = List<XFile>.from(_webSelectedImages);
+                                  updatedXFiles.removeAt(index);
+                                  _webSelectedImages = updatedXFiles;
+                                  onXFilesSelected?.call(updatedXFiles);
+                                } else {
+                                  final updatedImages = List<File>.from(selectedImages!);
+                                  updatedImages.removeAt(index);
+                                  onImagesSelected?.call(updatedImages);
+                                }
                                 widget.formKey.currentState?.save();
                                 widget.onModified?.call();
                               },
@@ -1447,38 +1465,99 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
               ),
             ),
           SizedBox(height: normalPadding),
-          // Add photo button
-          if (selectedImages.length < maxImages && isEdit)
-            SecondaryFlatButton(
-              onPressed: () async {
-                final ImagePicker picker = ImagePicker();
-                final List<XFile> images = await picker.pickMultiImage();
-                
-                if (images.isNotEmpty) {
-                  final newFiles = kIsWeb 
-                      ? <File>[] // Skip creating File objects on web for now
-                      : images.map((image) => File(image.path)).toList();
-                  final updatedImages = List<File>.from(selectedImages!)..addAll(newFiles);
-                  
-                  // Ensure we don't exceed max images
-                  if (updatedImages.length > maxImages) {
-                    updatedImages.removeRange(maxImages, updatedImages.length);
-                  }
-                  
-                  onImagesSelected?.call(updatedImages);
-                  widget.formKey.currentState?.save();
-                  widget.onModified?.call();
-                }
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.add_photo_alternate),
-                  SizedBox(width: smallPadding),
-                  Text('Add Photos (${selectedImages.length}/$maxImages)'),
-                ],
-              ),
+          // Add photo buttons
+          if (((kIsWeb && _webSelectedImages.length < maxImages) || 
+               (!kIsWeb && selectedImages.length < maxImages)) && isEdit)
+            Row(
+              children: [
+                Expanded(
+                  child: SecondaryFlatButton(
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image = await picker.pickImage(
+                        source: ImageSource.camera,
+                      );
+                      
+                      if (image != null) {
+                        if (kIsWeb) {
+                          final updatedXFiles = List<XFile>.from(_webSelectedImages)..add(image);
+                          _webSelectedImages = updatedXFiles;
+                          onXFilesSelected?.call(updatedXFiles);
+                        } else {
+                          final newFile = File(image.path);
+                          final updatedImages = List<File>.from(selectedImages!)..add(newFile);
+                          onImagesSelected?.call(updatedImages);
+                        }
+                        widget.formKey.currentState?.save();
+                        widget.onModified?.call();
+                      }
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.camera_alt),
+                        SizedBox(width: smallPadding),
+                        Text('Camera'),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: smallPadding),
+                Expanded(
+                  child: SecondaryFlatButton(
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final List<XFile> images = await picker.pickMultiImage();
+                      
+                      if (images.isNotEmpty) {
+                        if (kIsWeb) {
+                          final updatedXFiles = List<XFile>.from(_webSelectedImages)..addAll(images);
+                          
+                          // Ensure we don't exceed max images
+                          if (updatedXFiles.length > maxImages) {
+                            updatedXFiles.removeRange(maxImages, updatedXFiles.length);
+                          }
+                          
+                          _webSelectedImages = updatedXFiles;
+                          onXFilesSelected?.call(updatedXFiles);
+                        } else {
+                          final newFiles = images.map((image) => File(image.path)).toList();
+                          final updatedImages = List<File>.from(selectedImages!)..addAll(newFiles);
+                          
+                          // Ensure we don't exceed max images
+                          if (updatedImages.length > maxImages) {
+                            updatedImages.removeRange(maxImages, updatedImages.length);
+                          }
+                          
+                          onImagesSelected?.call(updatedImages);
+                        }
+                        widget.formKey.currentState?.save();
+                        widget.onModified?.call();
+                      }
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add_photo_alternate),
+                        SizedBox(width: smallPadding),
+                        Text('Gallery'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
+          SizedBox(height: smallPadding),
+          // Photo count indicator
+          Text(
+            kIsWeb 
+                ? 'Photos: ${_webSelectedImages.length}/$maxImages'
+                : 'Photos: ${selectedImages.length}/$maxImages',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );
