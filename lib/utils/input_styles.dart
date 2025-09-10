@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'constants.dart';
 
 InputDecoration elegantInputDecoration({
   String? hintText,
@@ -12,30 +11,35 @@ InputDecoration elegantInputDecoration({
     prefixIcon: prefix,
     suffixIcon: suffix,
     border: OutlineInputBorder(
-      borderRadius: primaryBorderRadius,
-      borderSide: const BorderSide(color: primaryGray, width: 0.6),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey[300]!, width: 1.0),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: primaryBorderRadius,
-      borderSide: const BorderSide(color: primaryGray, width: 0.6),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey[300]!, width: 1.0),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: primaryBorderRadius,
-      borderSide: const BorderSide(color: primaryActiveColor, width: 1.2),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.blue, width: 2.0),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: primaryBorderRadius,
-      borderSide: const BorderSide(color: Colors.red, width: 1.0),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.red, width: 1.5),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: primaryBorderRadius,
-      borderSide: const BorderSide(color: Colors.red, width: 1.2),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.red, width: 2.0),
     ),
     filled: true,
-    fillColor: Colors.white,
+    fillColor: Colors.grey[50],
+    hintStyle: TextStyle(
+      color: Colors.grey[500],
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+    ),
     contentPadding: EdgeInsets.symmetric(
-      horizontal: normalPadding,
-      vertical: isSpinner ? smallPadding : normalPadding,
+      horizontal: 16,
+      vertical: isSpinner ? 12 : 16,
     ),
   );
 }

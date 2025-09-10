@@ -1,7 +1,10 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -52,6 +55,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
   }
 
   File? selectedImage;
+  Uint8List? selectedImageBytes; // For web compatibility
 
   Future<void> save() async {}
 
@@ -92,6 +96,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
   void removeProfilePicture() {
     setState(() {
       selectedImage = null;
+      selectedImageBytes = null;
       if (widget.onImageSelected != null) {
         widget.onImageSelected!(selectedImage);
       }
@@ -107,7 +112,20 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
 
     if (image != null) {
       setState(() {
-        selectedImage = File(image.path);
+        if (kIsWeb) {
+          // For web, store bytes instead of File
+          image.readAsBytes().then((bytes) {
+            setState(() {
+              selectedImageBytes = bytes;
+              selectedImage = null; // Clear file reference on web
+            });
+          });
+        } else {
+          // For mobile platforms
+          selectedImage = File(image.path);
+          selectedImageBytes = null;
+        }
+        
         if (widget.onImageSelected != null) {
           widget.onImageSelected!(selectedImage);
         }
@@ -171,16 +189,23 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           (defaultValue != null && defaultValue.isNotEmpty) ||
-                  selectedImage != null
+                  selectedImage != null || selectedImageBytes != null
               ? CircleAvatar(
-                  radius: xlargeImageRadius,
-                  backgroundImage: selectedImage != null
-                      ? FileImage(selectedImage!)
-                      : CachedNetworkImageProvider(defaultValue!),
+                  radius: 50,
+                  backgroundImage: kIsWeb && selectedImageBytes != null
+                      ? MemoryImage(selectedImageBytes!)
+                      : selectedImage != null
+                          ? FileImage(selectedImage!)
+                          : CachedNetworkImageProvider(defaultValue!),
                 )
               : CircleAvatar(
-                  radius: xlargeImageRadius,
-                  child: const Icon(Icons.person, size: 100),
+                  radius: 50,
+                  backgroundColor: Colors.grey[200],
+                  child: Icon(
+                    Icons.person, 
+                    size: kIsWeb ? 60 : 100,
+                    color: Colors.grey[600],
+                  ),
                 ),
           SizedBox(width: largePadding),
           Column(
@@ -1097,19 +1122,45 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
       subTitle: subTitle,
       inputWidget: DropdownButtonFormField<String>(
         value: defaultValue,
-        dropdownColor: Theme.of(context).primaryColor,
-        style: Theme.of(context).textTheme.bodyLarge,
+        dropdownColor: Colors.white,
+        style: const TextStyle(
+          color: Colors.black87,
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
         hint: Text(
           hintText ?? 'Select an option',
-          style: Theme.of(context).textTheme.labelLarge,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        icon: Icon(
+          Icons.keyboard_arrow_down,
+          color: Colors.grey[600],
+          size: 24,
         ),
         decoration: elegantInputDecoration(
           hintText: '',
-          prefix: Icon(iconData),
+          prefix: Icon(iconData, color: Colors.grey[600]),
         ),
         menuMaxHeight: 300,
         items: options.map((String option) {
-          return DropdownMenuItem<String>(value: option, child: Text(option));
+          return DropdownMenuItem<String>(
+            value: option,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: Text(
+                option,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          );
         }).toList(),
         onChanged: isEdit
             ? (value) {
@@ -1160,41 +1211,70 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         items: options
             .map((item) => MultiSelectItem<String>(item, item))
             .toList(),
-        selectedColor: primaryCardColor,
+        selectedColor: Colors.blue[100],
         separateSelectedItems: true,
-        selectedItemsTextStyle: subHeadingDark,
-        itemsTextStyle: subHeadingDark,
-        searchTextStyle: subHeadingDark,
+        selectedItemsTextStyle: const TextStyle(
+          color: Colors.black87,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        itemsTextStyle: const TextStyle(
+          color: Colors.black87,
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        searchTextStyle: const TextStyle(
+          color: Colors.black87,
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
         decoration: BoxDecoration(
-          borderRadius: primaryBorderRadius,
-          border: Border.all(color: primaryGray, width: 0.6),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[300]!, width: 1.0),
+          color: Colors.grey[50],
         ),
         searchable: searchable,
         confirmText: Text(
           confirmText,
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: const TextStyle(
+            color: Colors.blue,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         cancelText: Text(
           cancelText,
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: const TextStyle(
+            color: Colors.grey,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-        dialogWidth: 800 * scalingFactor,
+        dialogWidth: 400,
         chipDisplay: MultiSelectChipDisplay(
           items: options
               .map((item) => MultiSelectItem<String>(item, item))
               .toList(),
-          chipColor: primaryCardColor,
-          textStyle: subHeadingDark,
+          chipColor: Colors.blue[50],
+          textStyle: const TextStyle(
+            color: Colors.black87,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: primaryBorderRadius,
-            side: const BorderSide(color: primaryGray, width: 0.6),
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: Colors.blue[200]!, width: 1.0),
           ),
         ),
         listType: MultiSelectListType.CHIP,
         buttonIcon: const Icon(Icons.list),
         buttonText: Text(
           'Select $title',
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
         ),
         onConfirm: (values) {
           onChanged(values);
@@ -1229,10 +1309,15 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           return RadioListTile<T>(
             title: Text(
               getDisplayText(option),
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
             ),
             value: option,
             groupValue: defaultValue,
+            activeColor: Colors.blue,
             onChanged: isEdit
                 ? (T? value) {
                     onChanged(value);
@@ -1311,13 +1396,24 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                     child: Stack(
                       children: [
                         ClipRRect(
-                          borderRadius: primaryBorderRadius,
-                          child: Image.file(
-                            selectedImages![index],
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
+                          borderRadius: BorderRadius.circular(8),
+                          child: kIsWeb
+                              ? Container(
+                                  width: 100,
+                                  height: 100,
+                                  color: Colors.grey[300],
+                                  child: Icon(
+                                    Icons.image,
+                                    size: 40,
+                                    color: Colors.grey[600],
+                                  ),
+                                )
+                              : Image.file(
+                                  selectedImages![index],
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                         if (isEdit)
                           Positioned(
@@ -1359,7 +1455,9 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                 final List<XFile> images = await picker.pickMultiImage();
                 
                 if (images.isNotEmpty) {
-                  final newFiles = images.map((image) => File(image.path)).toList();
+                  final newFiles = kIsWeb 
+                      ? <File>[] // Skip creating File objects on web for now
+                      : images.map((image) => File(image.path)).toList();
                   final updatedImages = List<File>.from(selectedImages!)..addAll(newFiles);
                   
                   // Ensure we don't exceed max images
