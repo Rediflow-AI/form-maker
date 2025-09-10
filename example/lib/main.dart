@@ -113,24 +113,35 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
       padding: EdgeInsets.all(16.0),
       child: Column(
         children: [
+          // Profile picture at the top
+          pictureFormEntry(
+            title: "Restaurant Logo",
+            subTitle: "Upload your restaurant's logo or main photo",
+          ),
+          SizedBox(height: 24.0),
+          
           textFormEntry(
             title: "Restaurant Name",
             subTitle: "Enter the name of your restaurant",
             validator: (value) => value?.isEmpty == true ? "Please enter restaurant name" : null,
+            iconData: Icons.restaurant,
           ),
           SizedBox(height: 16.0),
+          
           textFormEntry(
-            title: "Description",
-            subTitle: "Brief description of your restaurant",
-            hint: "Tell us about your restaurant...",
+            title: "Tagline",
+            subTitle: "Your restaurant's catchy tagline or slogan",
+            hint: "e.g., 'Authentic flavors from Italy'",
+            iconData: Icons.format_quote,
           ),
           SizedBox(height: 16.0),
+          
           singleSelectFormEntry(
             title: "Cuisine Type",
-            subTitle: "Select the type of cuisine you serve",
+            subTitle: "Primary cuisine you specialize in",
             options: [
               'Italian',
-              'Chinese',
+              'Chinese', 
               'Mexican',
               'Indian',
               'Japanese',
@@ -138,6 +149,10 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
               'French',
               'Thai',
               'Mediterranean',
+              'Fusion',
+              'Steakhouse',
+              'Seafood',
+              'Vegetarian/Vegan',
               'Other'
             ],
             onChanged: (value) {
@@ -149,46 +164,78 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
             defaultValue: selectedCuisineType,
           ),
           SizedBox(height: 16.0),
+          
           singleSelectFormEntry(
-            title: "Restaurant Type",
-            subTitle: "Select the type of your restaurant",
+            title: "Dining Style",
+            subTitle: "What type of dining experience do you offer?",
             options: [
-              'Fast Food',
-              'Casual Dining',
               'Fine Dining',
-              'Cafe',
+              'Casual Dining',
+              'Fast Casual',
+              'Quick Service',
               'Food Truck',
               'Buffet',
-              'Other'
+              'Cafe/Bistro',
+              'Sports Bar',
+              'Family Restaurant',
+              'Pop-up Restaurant'
             ],
             onChanged: (value) {
               setState(() {
                 selectedRestaurantType = value ?? "";
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select restaurant type" : null,
+            validator: (value) => value?.isEmpty == true ? "Please select dining style" : null,
             defaultValue: selectedRestaurantType,
           ),
           SizedBox(height: 16.0),
+          
           textFormEntry(
-            title: "Phone Number",
-            subTitle: "Contact phone number",
-            validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+            title: "Chef/Owner Name",
+            subTitle: "Name of the head chef or restaurant owner",
+            iconData: Icons.person_outline,
           ),
           SizedBox(height: 16.0),
+          
+          Row(
+            children: [
+              Expanded(
+                child: textFormEntry(
+                  title: "Phone Number",
+                  subTitle: "Main contact number",
+                  iconData: Icons.phone,
+                  validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: textFormEntry(
+                  title: "Reservation Phone",
+                  subTitle: "For reservations (if different)",
+                  iconData: Icons.event_seat,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.0),
+          
+          textFormEntry(
+            title: "Website URL",
+            subTitle: "Your restaurant's website",
+            hint: "https://www.yourrestaurant.com",
+            iconData: Icons.web,
+          ),
+          SizedBox(height: 16.0),
+          
           addressFormEntry(
-            title: "Restaurant Address",
-            subTitle: "Complete address of your restaurant",
+            title: "Restaurant Location",
+            subTitle: "Complete address where customers can find you",
           ),
           SizedBox(height: 16.0),
-          pictureFormEntry(
-            title: "Restaurant Photo",
-            subTitle: "Upload a photo of your restaurant",
-          ),
-          SizedBox(height: 16.0),
+          
           multiPhotoFormEntry(
-            title: "Menu Photos",
-            subTitle: "Upload photos of your menu items",
+            title: "Restaurant Gallery",
+            subTitle: "Upload photos of your restaurant, dishes, and ambiance",
             selectedImages: selectedPhotos,
             onImagesSelected: (photos) {
               setState(() {
@@ -200,36 +247,67 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
                 selectedXFilePhotos = xFiles;
               });
             },
-            maxImages: 5,
+            maxImages: 8,
           ),
           SizedBox(height: 16.0),
-          numberSpinnerFormEntry(
-            title: "Average Price per Person",
-            subTitle: "Average price in local currency",
-            min: 1,
-            max: 1000,
-            defaultValue: 20,
+          
+          Row(
+            children: [
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "Seating Capacity",
+                  subTitle: "Maximum number of guests",
+                  min: 1,
+                  max: 500,
+                  defaultValue: 50,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "Average Price",
+                  subTitle: "Price per person (USD)",
+                  min: 5,
+                  max: 200,
+                  defaultValue: 25,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
+          
           switchFormEntry(
             title: "Currently Open",
-            subTitle: "Is your restaurant currently open?",
+            subTitle: "Are you currently serving customers?",
             onToggle: (value) {},
-            defaultValue: false,
+            defaultValue: true,
           ),
           SizedBox(height: 16.0),
+          
+          switchFormEntry(
+            title: "Accept Reservations",
+            subTitle: "Do you take table reservations?",
+            onToggle: (value) {},
+            defaultValue: true,
+          ),
+          SizedBox(height: 16.0),
+          
           multiSelectFormEntry(
-            title: "Services",
-            subTitle: "Select all services you provide",
+            title: "Service Options",
+            subTitle: "What services do you offer?",
             options: [
-              'Delivery',
-              'Takeout',
               'Dine-in',
+              'Takeout',
+              'Delivery',
+              'Curbside Pickup',
               'Catering',
+              'Private Events',
               'Online Ordering',
-              'Reservations',
-              'WiFi',
-              'Parking'
+              'Table Reservations',
+              'Happy Hour',
+              'Live Music',
+              'Outdoor Seating',
+              'Pet Friendly'
             ],
             onChanged: (selectedValues) {
               setState(() {
@@ -301,88 +379,214 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
       padding: EdgeInsets.all(16.0),
       child: Column(
         children: [
+          // Profile picture at the top
+          pictureFormEntry(
+            title: "School Logo",
+            subTitle: "Upload your school's official logo or main building photo",
+          ),
+          SizedBox(height: 24.0),
+          
           textFormEntry(
-            title: "School Name",
-            subTitle: "Enter the name of your school",
-            validator: (value) => value?.isEmpty == true ? "Please enter school name" : null,
+            title: "Institution Name",
+            subTitle: "Official name of your educational institution",
+            validator: (value) => value?.isEmpty == true ? "Please enter institution name" : null,
+            iconData: Icons.school,
           ),
           SizedBox(height: 16.0),
+          
+          textFormEntry(
+            title: "School Motto",
+            subTitle: "Your institution's motto or mission statement",
+            hint: "e.g., 'Excellence in Education'",
+            iconData: Icons.star_outline,
+          ),
+          SizedBox(height: 16.0),
+          
           singleSelectFormEntry(
-            title: "School Type",
-            subTitle: "Select the type of educational institution",
+            title: "Institution Type",
+            subTitle: "What type of educational institution is this?",
             options: [
-              'Elementary School',
-              'Middle School',
-              'High School',
+              'Public Elementary School',
+              'Private Elementary School',
+              'Public Middle School',
+              'Private Middle School',
+              'Public High School',
+              'Private High School',
+              'Charter School',
+              'Montessori School',
+              'International School',
+              'Technical College',
+              'Community College',
               'University',
-              'College',
-              'Private School',
-              'Public School',
-              'Charter School'
+              'Online Academy'
             ],
             onChanged: (value) {
               setState(() {
                 selectedSchoolType = value ?? "";
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select school type" : null,
+            validator: (value) => value?.isEmpty == true ? "Please select institution type" : null,
             defaultValue: selectedSchoolType,
           ),
           SizedBox(height: 16.0),
-          textFormEntry(
-            title: "Principal Name",
-            subTitle: "Name of the principal or head of school",
-            validator: (value) => value?.isEmpty == true ? "Please enter principal name" : null,
+          
+          Row(
+            children: [
+              Expanded(
+                child: textFormEntry(
+                  title: "Principal/Dean",
+                  subTitle: "Head of institution",
+                  validator: (value) => value?.isEmpty == true ? "Please enter principal/dean name" : null,
+                  iconData: Icons.person_outline,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: textFormEntry(
+                  title: "Founded Year",
+                  subTitle: "Year established",
+                  hint: "e.g., 1985",
+                  iconData: Icons.history,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
-          textFormEntry(
-            title: "Phone Number",
-            subTitle: "Contact phone number",
-            validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+          
+          Row(
+            children: [
+              Expanded(
+                child: textFormEntry(
+                  title: "Main Phone",
+                  subTitle: "Primary contact number",
+                  validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+                  iconData: Icons.phone,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: textFormEntry(
+                  title: "Admissions Phone",
+                  subTitle: "For new enrollments",
+                  iconData: Icons.how_to_reg,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
+          
           textFormEntry(
-            title: "Email",
-            subTitle: "Official email address",
+            title: "Official Email",
+            subTitle: "Main institutional email address",
             validator: (value) {
               if (value?.isEmpty == true) return "Please enter email";
               if (value?.contains('@') != true) return "Please enter valid email";
               return null;
             },
+            iconData: Icons.email,
           ),
           SizedBox(height: 16.0),
+          
+          textFormEntry(
+            title: "Website",
+            subTitle: "School's official website",
+            hint: "https://www.yourschool.edu",
+            iconData: Icons.web,
+          ),
+          SizedBox(height: 16.0),
+          
           addressFormEntry(
-            title: "School Address",
-            subTitle: "Complete address of the school",
+            title: "Campus Address",
+            subTitle: "Main campus location and postal address",
           ),
           SizedBox(height: 16.0),
-          pictureFormEntry(
-            title: "School Photo",
-            subTitle: "Upload a photo of your school",
+          
+          Row(
+            children: [
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "Student Enrollment",
+                  subTitle: "Total current students",
+                  min: 10,
+                  max: 50000,
+                  defaultValue: 500,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "Faculty Count",
+                  subTitle: "Number of teachers/staff",
+                  min: 5,
+                  max: 2000,
+                  defaultValue: 50,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
-          numberSpinnerFormEntry(
-            title: "Number of Students",
-            subTitle: "Total number of students enrolled",
-            min: 1,
-            max: 10000,
-            defaultValue: 100,
+          
+          Row(
+            children: [
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "Graduation Rate",
+                  subTitle: "Percentage (%)",
+                  min: 50,
+                  max: 100,
+                  defaultValue: 92,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "Student-Teacher Ratio",
+                  subTitle: "Students per teacher",
+                  min: 5,
+                  max: 30,
+                  defaultValue: 15,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
+          
+          switchFormEntry(
+            title: "Currently Enrolling",
+            subTitle: "Are you accepting new student applications?",
+            onToggle: (value) {},
+            defaultValue: true,
+          ),
+          SizedBox(height: 16.0),
+          
+          switchFormEntry(
+            title: "Accredited Institution",
+            subTitle: "Is your institution officially accredited?",
+            onToggle: (value) {},
+            defaultValue: true,
+          ),
+          SizedBox(height: 16.0),
+          
           multiSelectFormEntry(
-            title: "Facilities",
-            subTitle: "Select all facilities available at your school",
+            title: "Campus Facilities",
+            subTitle: "What facilities are available on your campus?",
             options: [
-              'Library',
+              'Main Library',
+              'Computer Labs',
+              'Science Laboratories',
+              'Athletic Facilities',
               'Gymnasium',
-              'Computer Lab',
-              'Science Lab',
-              'Cafeteria',
-              'Playground',
               'Swimming Pool',
-              'Auditorium',
-              'Art Room',
-              'Music Room'
+              'Auditorium/Theater',
+              'Art Studios',
+              'Music Rooms',
+              'Cafeteria',
+              'Student Housing',
+              'Parking',
+              'Medical Clinic',
+              'Counseling Center',
+              'Career Services',
+              'Research Centers'
             ],
             onChanged: (selectedValues) {
               setState(() {
@@ -453,78 +657,168 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
       padding: EdgeInsets.all(16.0),
       child: Column(
         children: [
-          textFormEntry(
-            title: "First Name",
-            subTitle: "Enter your first name",
-            validator: (value) => value?.isEmpty == true ? "Please enter first name" : null,
+          // Profile picture at the top
+          pictureFormEntry(
+            title: "Profile Photo",
+            subTitle: "Upload a professional or personal photo",
+          ),
+          SizedBox(height: 24.0),
+          
+          Row(
+            children: [
+              Expanded(
+                child: textFormEntry(
+                  title: "First Name",
+                  subTitle: "Your given name",
+                  validator: (value) => value?.isEmpty == true ? "Please enter first name" : null,
+                  iconData: Icons.person,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: textFormEntry(
+                  title: "Last Name",
+                  subTitle: "Your family name",
+                  validator: (value) => value?.isEmpty == true ? "Please enter last name" : null,
+                  iconData: Icons.person_outline,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
+          
           textFormEntry(
-            title: "Last Name",
-            subTitle: "Enter your last name",
-            validator: (value) => value?.isEmpty == true ? "Please enter last name" : null,
+            title: "Display Name/Username",
+            subTitle: "How would you like others to see you?",
+            hint: "e.g., john_doe, JohnD, etc.",
+            iconData: Icons.alternate_email,
           ),
           SizedBox(height: 16.0),
+          
           textFormEntry(
-            title: "Email",
-            subTitle: "Enter your email address",
+            title: "Email Address",
+            subTitle: "Your primary email for communication",
             validator: (value) {
               if (value?.isEmpty == true) return "Please enter email";
               if (value?.contains('@') != true) return "Please enter valid email";
               return null;
             },
+            iconData: Icons.email,
           ),
           SizedBox(height: 16.0),
+          
+          Row(
+            children: [
+              Expanded(
+                child: textFormEntry(
+                  title: "Primary Phone",
+                  subTitle: "Main contact number",
+                  validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+                  iconData: Icons.phone,
+                ),
+              ),
+              SizedBox(width: 16.0),  
+              Expanded(
+                child: textFormEntry(
+                  title: "Emergency Contact",
+                  subTitle: "Backup contact number",
+                  iconData: Icons.contact_phone,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.0),
+          
           textFormEntry(
-            title: "Phone Number",
-            subTitle: "Enter your phone number",
-            validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+            title: "Date of Birth",
+            subTitle: "When were you born? (MM/DD/YYYY)",
+            hint: "MM/DD/YYYY",
+            iconData: Icons.cake,
           ),
           SizedBox(height: 16.0),
+          
           radioButtonFormEntry<String>(
-            title: "Gender",
-            subTitle: "Select your gender",
-            options: ['Male', 'Female', 'Other'],
+            title: "Gender Identity",
+            subTitle: "How do you identify?",
+            options: ['Male', 'Female', 'Non-binary', 'Prefer not to say'],
             getDisplayText: (value) => value,
             onChanged: (value) {
               setState(() {
                 selectedGender = value ?? "";
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select gender" : null,
             defaultValue: selectedGender.isEmpty ? null : selectedGender,
           ),
           SizedBox(height: 16.0),
+          
           textFormEntry(
-            title: "Date of Birth",
-            subTitle: "Enter your date of birth (DD/MM/YYYY)",
-            hint: "DD/MM/YYYY",
+            title: "Occupation",
+            subTitle: "What do you do for work?",
+            hint: "e.g., Software Engineer, Teacher, Student",
+            iconData: Icons.work,
           ),
           SizedBox(height: 16.0),
+          
+          textFormEntry(
+            title: "LinkedIn Profile",
+            subTitle: "Your professional LinkedIn URL (optional)",
+            hint: "https://linkedin.com/in/yourname",
+            iconData: Icons.business_center,
+          ),
+          SizedBox(height: 16.0),
+          
           addressFormEntry(
             title: "Home Address",
-            subTitle: "Enter your home address",
+            subTitle: "Your current residential address",
           ),
           SizedBox(height: 16.0),
-          pictureFormEntry(
-            title: "Profile Photo",
-            subTitle: "Upload your profile photo",
+          
+          textFormEntry(
+            title: "Bio/About Me",
+            subTitle: "Tell us a bit about yourself",
+            hint: "A short description about your background, interests, or goals...",
+            iconData: Icons.info_outline,
           ),
           SizedBox(height: 16.0),
+          
+          switchFormEntry(
+            title: "Public Profile",
+            subTitle: "Make your profile visible to others?",
+            onToggle: (value) {},
+            defaultValue: false,
+          ),
+          SizedBox(height: 16.0),
+          
+          switchFormEntry(
+            title: "Email Notifications",
+            subTitle: "Receive updates and newsletters?",
+            onToggle: (value) {},
+            defaultValue: true,
+          ),
+          SizedBox(height: 16.0),
+          
           multiSelectFormEntry(
-            title: "Interests",
-            subTitle: "Select your interests and hobbies",
+            title: "Skills & Interests",
+            subTitle: "What are you passionate about or skilled in?",
             options: [
-              'Sports',
-              'Music',
-              'Art',
-              'Technology',
-              'Reading',
-              'Travel',
-              'Cooking',
+              'Programming/Coding',
+              'Digital Marketing',
+              'Graphic Design',
               'Photography',
+              'Writing/Blogging',
+              'Music Production',
+              'Video Editing',
+              'Public Speaking',
+              'Project Management',
+              'Data Analysis',
+              'Sports & Fitness',
+              'Travel & Adventure',
+              'Cooking & Baking',
+              'Reading & Literature',
               'Gaming',
-              'Movies'
+              'Art & Crafts',
+              'Volunteering',
+              'Entrepreneurship'
             ],
             onChanged: (selectedValues) {
               setState(() {
@@ -595,91 +889,225 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
       padding: EdgeInsets.all(16.0),
       child: Column(
         children: [
+          // Profile picture at the top
+          pictureFormEntry(
+            title: "Hospital Main Building",
+            subTitle: "Upload a photo of your hospital's main entrance or building",
+          ),
+          SizedBox(height: 24.0),
+          
           textFormEntry(
-            title: "Hospital Name",
-            subTitle: "Enter the name of your hospital",
-            validator: (value) => value?.isEmpty == true ? "Please enter hospital name" : null,
+            title: "Medical Center Name",
+            subTitle: "Official name of your healthcare facility",
+            validator: (value) => value?.isEmpty == true ? "Please enter medical center name" : null,
+            iconData: Icons.local_hospital,
           ),
           SizedBox(height: 16.0),
+          
+          textFormEntry(
+            title: "Hospital ID/License",
+            subTitle: "Official registration or license number",
+            hint: "e.g., MC-2024-001",
+            iconData: Icons.badge,
+          ),
+          SizedBox(height: 16.0),
+          
           singleSelectFormEntry(
-            title: "Hospital Type",
-            subTitle: "Select the type of hospital",
+            title: "Healthcare Facility Type",
+            subTitle: "What type of medical facility is this?",
             options: [
               'General Hospital',
+              'Children\'s Hospital',
               'Specialty Hospital',
               'Teaching Hospital',
-              'Private Hospital',
-              'Public Hospital',
-              'Emergency Hospital',
+              'Trauma Center',
+              'Rehabilitation Center',
               'Psychiatric Hospital',
-              'Rehabilitation Hospital'
+              'Cancer Treatment Center',
+              'Cardiac Care Center',
+              'Outpatient Clinic',
+              'Urgent Care Center',
+              'Veterans Hospital',
+              'Private Medical Center'
             ],
             onChanged: (value) {
               setState(() {
                 selectedHospitalType = value ?? "";
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select hospital type" : null,
+            validator: (value) => value?.isEmpty == true ? "Please select facility type" : null,
             defaultValue: selectedHospitalType,
           ),
           SizedBox(height: 16.0),
-          textFormEntry(
-            title: "Chief Medical Officer",
-            subTitle: "Name of the Chief Medical Officer",
-            validator: (value) => value?.isEmpty == true ? "Please enter CMO name" : null,
+          
+          Row(
+            children: [
+              Expanded(
+                child: textFormEntry(
+                  title: "Chief Medical Officer",
+                  subTitle: "CMO or Medical Director",
+                  validator: (value) => value?.isEmpty == true ? "Please enter CMO name" : null,
+                  iconData: Icons.person,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: textFormEntry(
+                  title: "Administrator",
+                  subTitle: "Hospital Administrator/CEO",
+                  iconData: Icons.business_center,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
-          textFormEntry(
-            title: "Phone Number",
-            subTitle: "Main hospital phone number",
-            validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+          
+          Row(
+            children: [
+              Expanded(
+                child: textFormEntry(
+                  title: "Main Phone",
+                  subTitle: "General hospital number",
+                  validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+                  iconData: Icons.phone,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: textFormEntry(
+                  title: "Emergency Hotline",
+                  subTitle: "24/7 emergency contact",
+                  validator: (value) => value?.isEmpty == true ? "Please enter emergency number" : null,
+                  iconData: Icons.emergency,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
+          
           textFormEntry(
-            title: "Emergency Number",
-            subTitle: "Emergency contact number",
-            validator: (value) => value?.isEmpty == true ? "Please enter emergency number" : null,
+            title: "Patient Services Line",
+            subTitle: "For appointments and patient inquiries",
+            iconData: Icons.support_agent,
           ),
           SizedBox(height: 16.0),
+          
+          textFormEntry(
+            title: "Hospital Website",
+            subTitle: "Official medical center website",
+            hint: "https://www.yourhospital.com",
+            iconData: Icons.web,
+          ),
+          SizedBox(height: 16.0),
+          
           addressFormEntry(
-            title: "Hospital Address",
-            subTitle: "Complete address of the hospital",
+            title: "Medical Center Address",
+            subTitle: "Complete address for patient visits and emergencies",
           ),
           SizedBox(height: 16.0),
-          pictureFormEntry(
-            title: "Hospital Photo",
-            subTitle: "Upload a photo of your hospital",
+          
+          Row(
+            children: [
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "Total Bed Capacity",
+                  subTitle: "All available beds",
+                  min: 10,
+                  max: 2000,
+                  defaultValue: 200,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "ICU Beds",
+                  subTitle: "Intensive care units",
+                  min: 1,
+                  max: 200,
+                  defaultValue: 20,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
-          numberSpinnerFormEntry(
-            title: "Number of Beds",
-            subTitle: "Total number of beds available",
-            min: 1,
-            max: 5000,
-            defaultValue: 100,
+          
+          Row(
+            children: [
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "Operating Rooms",
+                  subTitle: "Number of OR suites",
+                  min: 1,
+                  max: 50,
+                  defaultValue: 8,
+                ),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: numberSpinnerFormEntry(
+                  title: "Medical Staff",
+                  subTitle: "Doctors and nurses",
+                  min: 10,
+                  max: 5000,
+                  defaultValue: 150,
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16.0),
+          
           switchFormEntry(
-            title: "24/7 Emergency Service",
-            subTitle: "Does your hospital offer 24/7 emergency services?",
+            title: "24/7 Emergency Services",
+            subTitle: "Round-the-clock emergency department?",
+            onToggle: (value) {},
+            defaultValue: true,
+          ),
+          SizedBox(height: 16.0),
+          
+          switchFormEntry(
+            title: "Trauma Center",
+            subTitle: "Designated trauma treatment facility?",
             onToggle: (value) {},
             defaultValue: false,
           ),
           SizedBox(height: 16.0),
+          
+          switchFormEntry(
+            title: "Teaching Hospital",
+            subTitle: "Medical education and residency programs?",
+            onToggle: (value) {},
+            defaultValue: false,
+          ),
+          SizedBox(height: 16.0),
+          
           multiSelectFormEntry(
-            title: "Departments",
-            subTitle: "Select all departments available in your hospital",
+            title: "Medical Departments",
+            subTitle: "What specialized departments do you have?",
             options: [
-              'Emergency',
+              'Emergency Medicine',
+              'Internal Medicine', 
+              'Surgery',
               'Cardiology',
               'Neurology',
               'Orthopedics',
               'Pediatrics',
+              'Obstetrics & Gynecology',
               'Oncology',
               'Radiology',
-              'Surgery',
-              'ICU',
-              'Maternity'
+              'Anesthesiology',
+              'Pathology',
+              'Psychiatry',
+              'Dermatology',
+              'Ophthalmology',
+              'ENT (Otolaryngology)',
+              'Urology',
+              'Nephrology',
+              'Endocrinology',
+              'Rehabilitation Medicine',
+              'Intensive Care Unit',
+              'Neonatal ICU',
+              'Burn Unit',
+              'Transplant Center'
             ],
             onChanged: (selectedValues) {
               setState(() {

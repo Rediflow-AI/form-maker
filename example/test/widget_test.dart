@@ -18,17 +18,43 @@ void main() {
     // Verify that the app title is present
     expect(find.text('Form Maker Example'), findsOneWidget);
 
-    // Verify that the form heading is present
-    expect(find.text('Restaurant Information'), findsOneWidget);
+    // Verify that tabs are present
+    expect(find.text('Restaurant'), findsOneWidget);
+    expect(find.text('School'), findsOneWidget);
+    expect(find.text('User'), findsOneWidget);
+    expect(find.text('Hospital'), findsOneWidget);
 
-    // Verify that form fields are present
+    // Verify that the default restaurant form is shown
     expect(find.text('Restaurant Name'), findsOneWidget);
-    expect(find.text('Contact Email'), findsOneWidget);
-    expect(find.text('Restaurant Address'), findsOneWidget);
-    expect(find.text('Primary Currency'), findsOneWidget);
+    expect(find.text('Restaurant Logo'), findsOneWidget);
+    expect(find.text('Cuisine Type'), findsOneWidget);
     expect(find.text('Service Options'), findsOneWidget);
 
     // Test that text form fields are present
     expect(find.byType(TextFormField), findsWidgets);
+
+    // Test tab switching to school
+    await tester.tap(find.text('School'));
+    await tester.pumpAndSettle();
+    
+    // Verify school form is shown
+    expect(find.text('Institution Name'), findsOneWidget);
+    expect(find.text('School Logo'), findsOneWidget);
+
+    // Test tab switching to user
+    await tester.tap(find.text('User'));
+    await tester.pumpAndSettle();
+    
+    // Verify user form is shown
+    expect(find.text('First Name'), findsOneWidget);
+    expect(find.text('Profile Photo'), findsOneWidget);
+
+    // Test tab switching to hospital
+    await tester.tap(find.text('Hospital'));
+    await tester.pumpAndSettle();
+    
+    // Verify hospital form is shown
+    expect(find.text('Medical Center Name'), findsOneWidget);
+    expect(find.text('Hospital Main Building'), findsOneWidget);
   });
 }
