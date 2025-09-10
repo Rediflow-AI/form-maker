@@ -37,13 +37,27 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
   String? phone;
   Address address = Address();
   String? currency;
+  String? restaurantType;
   bool hasDelivery = false;
   bool hasSeating = true;
+  List<String> selectedCuisines = [];
+  List<String> selectedServices = [];
+  Map<String, bool> selectedAmenities = {};
 
   @override
   void initState() {
     super.initState();
     heading = 'Restaurant Information';
+
+    // Initialize amenities map
+    selectedAmenities = {
+      'WiFi': false,
+      'Parking': false,
+      'Wheelchair Accessible': false,
+      'Pet Friendly': false,
+      'Kids Menu': false,
+      'Vegan Options': false,
+    };
   }
 
   @override
@@ -95,11 +109,75 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
               currencyDropDownEntry(
                 title: 'Primary Currency',
                 subTitle: 'Select your menu currency',
-                onChanged: (value) => currency = value,
+                onChanged: (value) => setState(() => currency = value),
                 defaultValue: currency,
               ),
 
-              // Food Mode Selection
+              // Restaurant Type - Single Select
+              singleSelectFormEntry(
+                title: 'Restaurant Type',
+                subTitle: 'Select the type of your restaurant',
+                options: [
+                  'Fast Food',
+                  'Casual Dining',
+                  'Fine Dining',
+                  'Cafe',
+                  'Food Truck',
+                  'Bakery',
+                  'Bar & Grill'
+                ],
+                hintText: 'Choose restaurant type',
+                iconData: Icons.restaurant,
+                onChanged: (value) => setState(() => restaurantType = value),
+                defaultValue: restaurantType,
+                isRequired: true,
+              ),
+
+              // Cuisines - Multi Select
+              multiSelectFormEntry(
+                title: 'Cuisine Types',
+                subTitle: 'Select all cuisine types you serve',
+                options: [
+                  'Italian',
+                  'Chinese',
+                  'Indian',
+                  'Mexican',
+                  'Japanese',
+                  'Thai',
+                  'French',
+                  'American',
+                  'Mediterranean',
+                  'Korean',
+                  'Vietnamese',
+                  'Greek'
+                ],
+                onChanged: (values) =>
+                    setState(() => selectedCuisines = values),
+                defaultValues: selectedCuisines,
+                isRequired: true,
+              ),
+
+              // Services - Multi Select with custom options
+              multiSelectFormEntry(
+                title: 'Additional Services',
+                subTitle: 'Select additional services you provide',
+                options: [
+                  'Catering',
+                  'Private Events',
+                  'Online Ordering',
+                  'Loyalty Program',
+                  'Happy Hour',
+                  'Live Music',
+                  'Outdoor Seating'
+                ],
+                onChanged: (values) =>
+                    setState(() => selectedServices = values),
+                defaultValues: selectedServices,
+                confirmText: 'Add Services',
+                cancelText: 'Close',
+              ),
+
+              // Food Mode Selection - Keep original for comparison
               foodModeFormEntry(
                 title: 'Service Options',
                 subTitle: 'Select available service modes',
@@ -109,6 +187,26 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
                     setState(() => hasDelivery = value ?? false),
                 onSeatingChanged: (value) =>
                     setState(() => hasSeating = value ?? true),
+              ),
+
+              // Amenities - Checkbox List
+              checkboxListFormEntry(
+                title: 'Restaurant Amenities',
+                subTitle: 'Check all amenities available',
+                options: [
+                  'WiFi',
+                  'Parking',
+                  'Wheelchair Accessible',
+                  'Pet Friendly',
+                  'Kids Menu',
+                  'Vegan Options'
+                ],
+                selectedOptions: selectedAmenities,
+                onChanged: (amenity, isSelected) {
+                  setState(() {
+                    selectedAmenities[amenity] = isSelected;
+                  });
+                },
               ),
 
               SizedBox(height: 30),
@@ -139,8 +237,12 @@ class _ExampleFormPageState extends InfoFormState<ExampleFormPage> {
       print('Phone: $phone');
       print('Address: ${address.toString()}');
       print('Currency: $currency');
+      print('Restaurant Type: $restaurantType');
+      print('Selected Cuisines: $selectedCuisines');
+      print('Selected Services: $selectedServices');
       print('Has Delivery: $hasDelivery');
       print('Has Seating: $hasSeating');
+      print('Amenities: $selectedAmenities');
     }
   }
 }

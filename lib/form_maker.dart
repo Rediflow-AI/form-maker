@@ -1071,4 +1071,212 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     onChanged: onChanged,
     defaultValue: defaultValue,
   );
+
+  // Generic single select dropdown
+  Widget singleSelectFormEntry({
+    String title = 'Select Option',
+    String subTitle = 'Choose one option from the list',
+    required List<String> options,
+    String? hintText,
+    IconData iconData = Icons.list,
+    Function(String?)? onChanged,
+    String? defaultValue,
+    String? Function(String?)? validator,
+    bool isRequired = false,
+  }) {
+    if (options.isEmpty) {
+      throw ArgumentError('Options list cannot be empty');
+    }
+
+    if (!options.contains(defaultValue)) {
+      defaultValue = null;
+    }
+
+    return formEntry(
+      title: title,
+      subTitle: subTitle,
+      inputWidget: DropdownButtonFormField<String>(
+        value: defaultValue,
+        dropdownColor: Theme.of(context).primaryColor,
+        style: Theme.of(context).textTheme.bodyLarge,
+        hint: Text(
+          hintText ?? 'Select an option',
+          style: Theme.of(context).textTheme.labelLarge,
+        ),
+        decoration: elegantInputDecoration(
+          hintText: '',
+          prefix: Icon(iconData),
+        ),
+        menuMaxHeight: 300,
+        items: options.map((String option) {
+          return DropdownMenuItem<String>(value: option, child: Text(option));
+        }).toList(),
+        onChanged: isEdit
+            ? (value) {
+                onChanged?.call(value);
+                widget.formKey.currentState?.save();
+                widget.onModified?.call();
+              }
+            : null,
+        validator:
+            validator ??
+            (isRequired
+                ? (value) => value == null || value.isEmpty
+                      ? '$title is required'
+                      : null
+                : null),
+      ),
+    );
+  }
+
+  // Generic multi select form entry
+  Widget multiSelectFormEntry({
+    String title = 'Multi Select',
+    String subTitle = 'Choose multiple options from the list',
+    required List<String> options,
+    required void Function(List<String>) onChanged,
+    String? Function(List<String>?)? validator,
+    List<String>? defaultValues,
+    bool searchable = true,
+    String confirmText = 'Select',
+    String cancelText = 'Cancel',
+    bool isRequired = false,
+  }) {
+    if (options.isEmpty) {
+      throw ArgumentError('Options list cannot be empty');
+    }
+
+    return formEntry(
+      title: title,
+      subTitle: subTitle,
+      inputWidget: MultiSelectDialogField<String>(
+        validator:
+            validator ??
+            (isRequired
+                ? (values) => values == null || values.isEmpty
+                      ? '$title is required'
+                      : null
+                : null),
+        items: options
+            .map((item) => MultiSelectItem<String>(item, item))
+            .toList(),
+        selectedColor: primaryCardColor,
+        separateSelectedItems: true,
+        selectedItemsTextStyle: subHeadingDark,
+        itemsTextStyle: subHeadingDark,
+        searchTextStyle: subHeadingDark,
+        decoration: BoxDecoration(
+          borderRadius: primaryBorderRadius,
+          border: Border.all(color: primaryGray, width: 0.6),
+        ),
+        searchable: searchable,
+        confirmText: Text(
+          confirmText,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        cancelText: Text(
+          cancelText,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        dialogWidth: 800 * scalingFactor,
+        chipDisplay: MultiSelectChipDisplay(
+          items: options
+              .map((item) => MultiSelectItem<String>(item, item))
+              .toList(),
+          chipColor: primaryCardColor,
+          textStyle: subHeadingDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: primaryBorderRadius,
+            side: const BorderSide(color: primaryGray, width: 0.6),
+          ),
+        ),
+        listType: MultiSelectListType.CHIP,
+        buttonIcon: const Icon(Icons.list),
+        buttonText: Text(
+          'Select $title',
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        onConfirm: (values) {
+          onChanged(values);
+          widget.formKey.currentState?.save();
+          widget.onModified?.call();
+        },
+        initialValue: defaultValues ?? [],
+      ),
+    );
+  }
+
+  // Generic radio button form entry
+  Widget radioButtonFormEntry<T>({
+    String title = 'Radio Selection',
+    String subTitle = 'Choose one option',
+    required List<T> options,
+    required String Function(T) getDisplayText,
+    required Function(T?) onChanged,
+    T? defaultValue,
+    String? Function(T?)? validator,
+    bool isRequired = false,
+  }) {
+    if (options.isEmpty) {
+      throw ArgumentError('Options list cannot be empty');
+    }
+
+    return formEntry(
+      title: title,
+      subTitle: subTitle,
+      inputWidget: Column(
+        children: options.map((T option) {
+          return RadioListTile<T>(
+            title: Text(
+              getDisplayText(option),
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            value: option,
+            groupValue: defaultValue,
+            onChanged: isEdit
+                ? (T? value) {
+                    onChanged(value);
+                    widget.formKey.currentState?.save();
+                    widget.onModified?.call();
+                  }
+                : null,
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  // Generic checkbox list form entry
+  Widget checkboxListFormEntry({
+    String title = 'Checkbox List',
+    String subTitle = 'Select multiple options',
+    required List<String> options,
+    required Map<String, bool> selectedOptions,
+    required Function(String, bool) onChanged,
+    String? Function(Map<String, bool>?)? validator,
+    bool isRequired = false,
+  }) {
+    if (options.isEmpty) {
+      throw ArgumentError('Options list cannot be empty');
+    }
+
+    return formEntry(
+      title: title,
+      subTitle: subTitle,
+      inputWidget: Column(
+        children: options.map((String option) {
+          return CheckboxListTile(
+            title: Text(option, style: Theme.of(context).textTheme.bodyLarge),
+            value: selectedOptions[option] ?? false,
+            enabled: isEdit,
+            onChanged: (bool? value) {
+              onChanged(option, value ?? false);
+              widget.formKey.currentState?.save();
+              widget.onModified?.call();
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
 }
