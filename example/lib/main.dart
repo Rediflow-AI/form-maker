@@ -318,9 +318,49 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
             defaultValues: selectedServices,
           ),
           SizedBox(height: 24.0),
+          
+          // Show Form Data Button
+          Container(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => save(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: Text(
+                'Show Form Data',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          SizedBox(height: 24.0),
         ],
       ),
     );
+  }
+
+  @override
+  Future<void> save() async {
+    if (widget.formKey.currentState!.validate()) {
+      widget.formKey.currentState!.save();
+      
+      // Collect form data
+      Map<String, dynamic> formData = {
+        'Restaurant Type': selectedRestaurantType,
+        'Cuisine Type': selectedCuisineType,
+        'Selected Services': selectedServices,
+        'Has Photos': selectedPhotos.isNotEmpty || selectedXFilePhotos.isNotEmpty,
+        'Photo Count': selectedPhotos.length + selectedXFilePhotos.length,
+      };
+      
+      // Show popup with form data
+      _showFormDataPopup(context, 'Restaurant Form Data', formData);
+    }
   }
 
   void onSave() {
@@ -334,6 +374,48 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
   void onEdit() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Edit mode enabled')),
+    );
+  }
+
+  void _showFormDataPopup(BuildContext context, String title, Map<String, dynamic> data) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: data.entries.map((entry) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(color: Colors.black87, fontSize: 14),
+                      children: [
+                        TextSpan(
+                          text: '${entry.key}: ',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: entry.value.toString(),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -596,9 +678,46 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
             defaultValues: selectedFacilities,
           ),
           SizedBox(height: 24.0),
+          
+          // Show Form Data Button
+          Container(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => save(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: Text(
+                'Show Form Data',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          SizedBox(height: 24.0),
         ],
       ),
     );
+  }
+
+  @override
+  Future<void> save() async {
+    if (widget.formKey.currentState!.validate()) {
+      widget.formKey.currentState!.save();
+      
+      // Collect form data
+      Map<String, dynamic> formData = {
+        'School Type': selectedSchoolType,
+        'Campus Facilities': selectedFacilities,
+      };
+      
+      // Show popup with form data
+      _showFormDataPopup(context, 'School Form Data', formData);
+    }
   }
 
   void onSave() {
@@ -612,6 +731,48 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
   void onEdit() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Edit mode enabled')),
+    );
+  }
+
+  void _showFormDataPopup(BuildContext context, String title, Map<String, dynamic> data) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: data.entries.map((entry) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(color: Colors.black87, fontSize: 14),
+                      children: [
+                        TextSpan(
+                          text: '${entry.key}: ',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: entry.value.toString(),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -828,9 +989,46 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             defaultValues: selectedInterests,
           ),
           SizedBox(height: 24.0),
+          
+          // Show Form Data Button
+          Container(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => save(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: Text(
+                'Show Form Data',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          SizedBox(height: 24.0),
         ],
       ),
     );
+  }
+
+  @override
+  Future<void> save() async {
+    if (widget.formKey.currentState!.validate()) {
+      widget.formKey.currentState!.save();
+      
+      // Collect form data
+      Map<String, dynamic> formData = {
+        'Gender': selectedGender,
+        'Interests': selectedInterests,
+      };
+      
+      // Show popup with form data
+      _showFormDataPopup(context, 'User Form Data', formData);
+    }
   }
 
   void onSave() {
@@ -844,6 +1042,48 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
   void onEdit() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Edit mode enabled')),
+    );
+  }
+
+  void _showFormDataPopup(BuildContext context, String title, Map<String, dynamic> data) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: data.entries.map((entry) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(color: Colors.black87, fontSize: 14),
+                      children: [
+                        TextSpan(
+                          text: '${entry.key}: ',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: entry.value.toString(),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -1118,9 +1358,46 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
             defaultValues: selectedDepartments,
           ),
           SizedBox(height: 24.0),
+          
+          // Show Form Data Button
+          Container(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => save(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: Text(
+                'Show Form Data',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          SizedBox(height: 24.0),
         ],
       ),
     );
+  }
+
+  @override
+  Future<void> save() async {
+    if (widget.formKey.currentState!.validate()) {
+      widget.formKey.currentState!.save();
+      
+      // Collect form data
+      Map<String, dynamic> formData = {
+        'Hospital Type': selectedHospitalType,
+        'Departments': selectedDepartments,
+      };
+      
+      // Show popup with form data
+      _showFormDataPopup(context, 'Hospital Form Data', formData);
+    }
   }
 
   void onSave() {
@@ -1134,6 +1411,48 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
   void onEdit() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Edit mode enabled')),
+    );
+  }
+
+  void _showFormDataPopup(BuildContext context, String title, Map<String, dynamic> data) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: data.entries.map((entry) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(color: Colors.black87, fontSize: 14),
+                      children: [
+                        TextSpan(
+                          text: '${entry.key}: ',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: entry.value.toString(),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
