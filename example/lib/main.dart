@@ -1210,6 +1210,7 @@ class HospitalFormPage extends InfoForm {
 class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
   String selectedHospitalType = "";
   List<String> selectedDepartments = [];
+  List<WorkingHour> operatingHours = [];
 
   // Text controllers to capture form data
   final TextEditingController hospitalNameController = TextEditingController();
@@ -1363,6 +1364,51 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
           addressFormEntry(
             title: "Medical Center Address",
             subTitle: "Complete address for patient visits and emergencies",
+          ),
+          SizedBox(height: 16.0),
+
+          // Operating Hours Section
+          Card(
+            elevation: 2,
+            margin: EdgeInsets.symmetric(vertical: 8.0),
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.access_time, color: Colors.blue),
+                      SizedBox(width: 8.0),
+                      Text(
+                        "Operating Hours",
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    "Set the hospital's visiting hours and operating schedule",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                  ),
+                  SizedBox(height: 16.0),
+                  WorkingHoursWidget(
+                    isEnabled: true, // Always enabled for editing
+                    onChanged: (hours) {
+                      setState(() {
+                        operatingHours = hours;
+                      });
+                    },
+                    workingHours: operatingHours,
+                  ),
+                ],
+              ),
+            ),
           ),
           SizedBox(height: 16.0),
 
@@ -1526,6 +1572,12 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
         'Has Hospital Photo': 'Building photo upload available',
         'Has Address': 'Address field completed',
         'Accreditation': 'Hospital accreditation status',
+        'Operating Hours': operatingHours.isEmpty
+            ? 'No hours set'
+            : operatingHours
+                .map((hour) =>
+                    '${hour.day}: ${hour.isOpen ? "${hour.openTime} - ${hour.closeTime}" : "Closed"}')
+                .join('\n'),
       };
 
       // Show popup with form data
