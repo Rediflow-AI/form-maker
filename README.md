@@ -1,8 +1,10 @@
 # Rediflow Form Maker
 
 [![pub package](https://img.shields.io/pub/v/rediflow_form_maker.svg)](https://pub.dev/packages/rediflow_form_maker)
-[![GitHub](https://img.shields.io/github/license/Rediflow-AI/form-maker)](https://github.com/Rediflow-AI/form-maker/blob/main/LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/Rediflow-AI/form-maker)](https://github.com/Rediflow-AI/form-maker/stargazers)
+[![pub points](https://img.shields.io/pub/points/rediflow_form_maker)](https://pub.dev/packages/rediflow_form_maker/score)
+[![popularity](https://img.shields.io/pub/popularity/rediflow_form_maker)](https://pub.dev/packages/rediflow_form_maker/score)
+[![likes](https://img.shields.io/pub/likes/rediflow_form_maker)](https://pub.dev/packages/rediflow_form_maker/score)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Rediflow-AI/form-maker/blob/main/LICENSE)
 
 A comprehensive Flutter package for creating beautiful and functional forms with pre-built components like text fields, dropdowns, image pickers, and more.
 
