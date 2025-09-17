@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../utils/constants.dart';
 import '../utils/input_styles.dart';
 import '../utils/extensions.dart';
@@ -59,6 +60,13 @@ class _PhoneFieldState extends State<PhoneField> {
           child: TextFormField(
             controller: countryCodeController,
             enabled: widget.isEditable,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(
+                4,
+              ), // Limit country code to 4 digits
+            ],
             decoration: elegantInputDecoration(hintText: '+1'),
             onChanged: (_) => _onChanged(),
             validator: widget.isRequired
@@ -72,8 +80,14 @@ class _PhoneFieldState extends State<PhoneField> {
             controller: phoneController,
             enabled: widget.isEditable,
             keyboardType: TextInputType.phone,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(
+                15,
+              ), // Limit phone number to 15 digits
+            ],
             decoration: elegantInputDecoration(
-              hintText: 'Phone Number',
+              hintText: 'Phone Number (numbers only)',
               prefix: const Icon(Icons.phone),
             ),
             onChanged: (_) => _onChanged(),

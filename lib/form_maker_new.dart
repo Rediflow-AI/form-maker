@@ -125,7 +125,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           selectedImage = File(image.path);
           selectedImageBytes = null;
         }
-        
+
         if (widget.onImageSelected != null) {
           widget.onImageSelected!(selectedImage);
         }
@@ -161,10 +161,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           if (subTitle != null) ...[
             Text(
               subTitle,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 12),
           ],

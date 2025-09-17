@@ -36,7 +36,7 @@ void main() {
     // Test tab switching to school
     await tester.tap(find.text('School'));
     await tester.pumpAndSettle();
-    
+
     // Verify school form is shown
     expect(find.text('Institution Name'), findsOneWidget);
     expect(find.text('School Logo'), findsOneWidget);
@@ -44,7 +44,7 @@ void main() {
     // Test tab switching to user
     await tester.tap(find.text('User'));
     await tester.pumpAndSettle();
-    
+
     // Verify user form is shown
     expect(find.text('First Name'), findsOneWidget);
     expect(find.text('Profile Photo'), findsOneWidget);
@@ -52,9 +52,21 @@ void main() {
     // Test tab switching to hospital
     await tester.tap(find.text('Hospital'));
     await tester.pumpAndSettle();
-    
+
     // Verify hospital form is shown
     expect(find.text('Medical Center Name'), findsOneWidget);
     expect(find.text('Hospital Main Building'), findsOneWidget);
+
+    // Test that Show Form Data button is present in all forms
+    expect(find.text('Show Form Data'), findsOneWidget);
+
+    // Test tab switching back to restaurant to verify button there too
+    await tester.tap(find.text('Restaurant'));
+    await tester.pumpAndSettle();
+    expect(find.text('Show Form Data'), findsOneWidget);
+
+    // Verify new fields are present in restaurant form
+    expect(find.text('Restaurant Phone'), findsOneWidget);
+    expect(find.text('Postal Code'), findsOneWidget);
   });
 }

@@ -25,7 +25,8 @@ class TabbedFormPage extends StatefulWidget {
   _TabbedFormPageState createState() => _TabbedFormPageState();
 }
 
-class _TabbedFormPageState extends State<TabbedFormPage> with SingleTickerProviderStateMixin {
+class _TabbedFormPageState extends State<TabbedFormPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -90,6 +91,13 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
   List<XFile> selectedXFilePhotos = []; // For web compatibility
   List<String> selectedServices = [];
 
+  // Text controllers to capture form data
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController taglineController = TextEditingController();
+  final TextEditingController websiteController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController postalCodeController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,29 +127,32 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
             subTitle: "Upload your restaurant's logo or main photo",
           ),
           SizedBox(height: 24.0),
-          
+
           textFormEntry(
             title: "Restaurant Name",
             subTitle: "Enter the name of your restaurant",
-            validator: (value) => value?.isEmpty == true ? "Please enter restaurant name" : null,
+            validator: (value) =>
+                value?.isEmpty == true ? "Please enter restaurant name" : null,
             iconData: Icons.restaurant,
+            controller: nameController,
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Tagline",
             subTitle: "Your restaurant's catchy tagline or slogan",
             hint: "e.g., 'Authentic flavors from Italy'",
             iconData: Icons.format_quote,
+            controller: taglineController,
           ),
           SizedBox(height: 16.0),
-          
+
           singleSelectFormEntry(
             title: "Cuisine Type",
             subTitle: "Primary cuisine you specialize in",
             options: [
               'Italian',
-              'Chinese', 
+              'Chinese',
               'Mexican',
               'Indian',
               'Japanese',
@@ -160,11 +171,12 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
                 selectedCuisineType = value ?? "";
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select cuisine type" : null,
+            validator: (value) =>
+                value?.isEmpty == true ? "Please select cuisine type" : null,
             defaultValue: selectedCuisineType,
           ),
           SizedBox(height: 16.0),
-          
+
           singleSelectFormEntry(
             title: "Dining Style",
             subTitle: "What type of dining experience do you offer?",
@@ -185,18 +197,19 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
                 selectedRestaurantType = value ?? "";
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select dining style" : null,
+            validator: (value) =>
+                value?.isEmpty == true ? "Please select dining style" : null,
             defaultValue: selectedRestaurantType,
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Chef/Owner Name",
             subTitle: "Name of the head chef or restaurant owner",
             iconData: Icons.person_outline,
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
@@ -204,7 +217,9 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
                   title: "Phone Number",
                   subTitle: "Main contact number",
                   iconData: Icons.phone,
-                  validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+                  validator: (value) => value?.isEmpty == true
+                      ? "Please enter phone number"
+                      : null,
                 ),
               ),
               SizedBox(width: 16.0),
@@ -218,21 +233,37 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Website URL",
             subTitle: "Your restaurant's website",
             hint: "https://www.yourrestaurant.com",
             iconData: Icons.web,
+            controller: websiteController,
           ),
           SizedBox(height: 16.0),
-          
+
           addressFormEntry(
             title: "Restaurant Location",
             subTitle: "Complete address where customers can find you",
           ),
           SizedBox(height: 16.0),
-          
+
+          phoneFormEntry(
+            title: "Restaurant Phone",
+            subTitle: "Contact number for reservations and inquiries",
+            showVerifyButton: false,
+            onSaved: (value) => phoneController.text = value ?? "",
+          ),
+          SizedBox(height: 16.0),
+
+          postalCodeFormEntry(
+            title: "Postal Code",
+            subTitle: "ZIP code for your restaurant location",
+            onSaved: (value) => postalCodeController.text = value ?? "",
+          ),
+          SizedBox(height: 16.0),
+
           multiPhotoFormEntry(
             title: "Restaurant Gallery",
             subTitle: "Upload photos of your restaurant, dishes, and ambiance",
@@ -250,7 +281,7 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
             maxImages: 8,
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
@@ -275,7 +306,7 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           switchFormEntry(
             title: "Currently Open",
             subTitle: "Are you currently serving customers?",
@@ -283,7 +314,7 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
             defaultValue: true,
           ),
           SizedBox(height: 16.0),
-          
+
           switchFormEntry(
             title: "Accept Reservations",
             subTitle: "Do you take table reservations?",
@@ -291,7 +322,7 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
             defaultValue: true,
           ),
           SizedBox(height: 16.0),
-          
+
           multiSelectFormEntry(
             title: "Service Options",
             subTitle: "What services do you offer?",
@@ -314,11 +345,13 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
                 selectedServices = selectedValues;
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select at least one service" : null,
+            validator: (value) => value?.isEmpty == true
+                ? "Please select at least one service"
+                : null,
             defaultValues: selectedServices,
           ),
           SizedBox(height: 24.0),
-          
+
           // Show Form Data Button
           Container(
             width: double.infinity,
@@ -348,16 +381,24 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
   Future<void> save() async {
     if (widget.formKey.currentState!.validate()) {
       widget.formKey.currentState!.save();
-      
+
       // Collect form data
       Map<String, dynamic> formData = {
-        'Restaurant Type': selectedRestaurantType,
-        'Cuisine Type': selectedCuisineType,
-        'Selected Services': selectedServices,
-        'Has Photos': selectedPhotos.isNotEmpty || selectedXFilePhotos.isNotEmpty,
-        'Photo Count': selectedPhotos.length + selectedXFilePhotos.length,
+        'Restaurant Name': nameController.text,
+        'Tagline': taglineController.text,
+        'Website URL': websiteController.text,
+        'Cuisine Type':
+            selectedCuisineType.isEmpty ? 'Not selected' : selectedCuisineType,
+        'Selected Services': selectedServices.isEmpty
+            ? 'None selected'
+            : selectedServices.join(', '),
+        'Photo Count':
+            '${selectedPhotos.length + selectedXFilePhotos.length} photos uploaded',
+        'Has Address': 'Address field completed',
+        'Has Phone': 'Phone number field present',
+        'Has Postal Code': 'Postal code field present',
       };
-      
+
       // Show popup with form data
       _showFormDataPopup(context, 'Restaurant Form Data', formData);
     }
@@ -377,7 +418,8 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
     );
   }
 
-  void _showFormDataPopup(BuildContext context, String title, Map<String, dynamic> data) {
+  void _showFormDataPopup(
+      BuildContext context, String title, Map<String, dynamic> data) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -438,6 +480,12 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
   String selectedSchoolType = "";
   List<String> selectedFacilities = [];
 
+  // Text controllers to capture form data
+  final TextEditingController institutionNameController =
+      TextEditingController();
+  final TextEditingController establishedYearController =
+      TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -464,26 +512,30 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
           // Profile picture at the top
           pictureFormEntry(
             title: "School Logo",
-            subTitle: "Upload your school's official logo or main building photo",
+            subTitle:
+                "Upload your school's official logo or main building photo",
           ),
           SizedBox(height: 24.0),
-          
+
           textFormEntry(
             title: "Institution Name",
             subTitle: "Official name of your educational institution",
-            validator: (value) => value?.isEmpty == true ? "Please enter institution name" : null,
+            validator: (value) =>
+                value?.isEmpty == true ? "Please enter institution name" : null,
             iconData: Icons.school,
+            controller: institutionNameController,
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "School Motto",
             subTitle: "Your institution's motto or mission statement",
             hint: "e.g., 'Excellence in Education'",
             iconData: Icons.star_outline,
+            controller: establishedYearController,
           ),
           SizedBox(height: 16.0),
-          
+
           singleSelectFormEntry(
             title: "Institution Type",
             subTitle: "What type of educational institution is this?",
@@ -507,18 +559,22 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
                 selectedSchoolType = value ?? "";
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select institution type" : null,
+            validator: (value) => value?.isEmpty == true
+                ? "Please select institution type"
+                : null,
             defaultValue: selectedSchoolType,
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
                 child: textFormEntry(
                   title: "Principal/Dean",
                   subTitle: "Head of institution",
-                  validator: (value) => value?.isEmpty == true ? "Please enter principal/dean name" : null,
+                  validator: (value) => value?.isEmpty == true
+                      ? "Please enter principal/dean name"
+                      : null,
                   iconData: Icons.person_outline,
                 ),
               ),
@@ -534,14 +590,16 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
                 child: textFormEntry(
                   title: "Main Phone",
                   subTitle: "Primary contact number",
-                  validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+                  validator: (value) => value?.isEmpty == true
+                      ? "Please enter phone number"
+                      : null,
                   iconData: Icons.phone,
                 ),
               ),
@@ -556,19 +614,20 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Official Email",
             subTitle: "Main institutional email address",
             validator: (value) {
               if (value?.isEmpty == true) return "Please enter email";
-              if (value?.contains('@') != true) return "Please enter valid email";
+              if (value?.contains('@') != true)
+                return "Please enter valid email";
               return null;
             },
             iconData: Icons.email,
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Website",
             subTitle: "School's official website",
@@ -576,13 +635,13 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
             iconData: Icons.web,
           ),
           SizedBox(height: 16.0),
-          
+
           addressFormEntry(
             title: "Campus Address",
             subTitle: "Main campus location and postal address",
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
@@ -607,7 +666,7 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
@@ -632,7 +691,7 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           switchFormEntry(
             title: "Currently Enrolling",
             subTitle: "Are you accepting new student applications?",
@@ -640,7 +699,7 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
             defaultValue: true,
           ),
           SizedBox(height: 16.0),
-          
+
           switchFormEntry(
             title: "Accredited Institution",
             subTitle: "Is your institution officially accredited?",
@@ -648,7 +707,7 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
             defaultValue: true,
           ),
           SizedBox(height: 16.0),
-          
+
           multiSelectFormEntry(
             title: "Campus Facilities",
             subTitle: "What facilities are available on your campus?",
@@ -678,7 +737,7 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
             defaultValues: selectedFacilities,
           ),
           SizedBox(height: 24.0),
-          
+
           // Show Form Data Button
           Container(
             width: double.infinity,
@@ -708,13 +767,21 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
   Future<void> save() async {
     if (widget.formKey.currentState!.validate()) {
       widget.formKey.currentState!.save();
-      
+
       // Collect form data
       Map<String, dynamic> formData = {
-        'School Type': selectedSchoolType,
-        'Campus Facilities': selectedFacilities,
+        'Institution Name': institutionNameController.text,
+        'School Motto': establishedYearController.text,
+        'School Type':
+            selectedSchoolType.isEmpty ? 'Not selected' : selectedSchoolType,
+        'Campus Facilities': selectedFacilities.isEmpty
+            ? 'None selected'
+            : selectedFacilities.join(', '),
+        'Accredited': 'Accreditation status available',
+        'Has School Logo': 'Logo upload available',
+        'Has Address': 'Address field completed',
       };
-      
+
       // Show popup with form data
       _showFormDataPopup(context, 'School Form Data', formData);
     }
@@ -734,7 +801,8 @@ class _SchoolFormPageState extends InfoFormState<SchoolFormPage> {
     );
   }
 
-  void _showFormDataPopup(BuildContext context, String title, Map<String, dynamic> data) {
+  void _showFormDataPopup(
+      BuildContext context, String title, Map<String, dynamic> data) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -795,6 +863,13 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
   String selectedGender = "";
   List<String> selectedInterests = [];
 
+  // Text controllers to capture form data
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController displayNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneUserController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -824,15 +899,17 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             subTitle: "Upload a professional or personal photo",
           ),
           SizedBox(height: 24.0),
-          
+
           Row(
             children: [
               Expanded(
                 child: textFormEntry(
                   title: "First Name",
                   subTitle: "Your given name",
-                  validator: (value) => value?.isEmpty == true ? "Please enter first name" : null,
+                  validator: (value) =>
+                      value?.isEmpty == true ? "Please enter first name" : null,
                   iconData: Icons.person,
+                  controller: firstNameController,
                 ),
               ),
               SizedBox(width: 16.0),
@@ -840,45 +917,60 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
                 child: textFormEntry(
                   title: "Last Name",
                   subTitle: "Your family name",
-                  validator: (value) => value?.isEmpty == true ? "Please enter last name" : null,
+                  validator: (value) =>
+                      value?.isEmpty == true ? "Please enter last name" : null,
                   iconData: Icons.person_outline,
+                  controller: lastNameController,
                 ),
               ),
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Display Name/Username",
             subTitle: "How would you like others to see you?",
             hint: "e.g., john_doe, JohnD, etc.",
             iconData: Icons.alternate_email,
+            controller: displayNameController,
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Email Address",
             subTitle: "Your primary email for communication",
             validator: (value) {
               if (value?.isEmpty == true) return "Please enter email";
-              if (value?.contains('@') != true) return "Please enter valid email";
+              if (value?.contains('@') != true)
+                return "Please enter valid email";
               return null;
             },
             iconData: Icons.email,
+            controller: emailController,
           ),
           SizedBox(height: 16.0),
-          
+
+          phoneFormEntry(
+            title: "Phone Number",
+            subTitle: "Your contact phone number",
+            showVerifyButton: false,
+            onSaved: (value) => phoneUserController.text = value ?? "",
+          ),
+          SizedBox(height: 16.0),
+
           Row(
             children: [
               Expanded(
                 child: textFormEntry(
                   title: "Primary Phone",
                   subTitle: "Main contact number",
-                  validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+                  validator: (value) => value?.isEmpty == true
+                      ? "Please enter phone number"
+                      : null,
                   iconData: Icons.phone,
                 ),
               ),
-              SizedBox(width: 16.0),  
+              SizedBox(width: 16.0),
               Expanded(
                 child: textFormEntry(
                   title: "Emergency Contact",
@@ -889,7 +981,7 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Date of Birth",
             subTitle: "When were you born? (MM/DD/YYYY)",
@@ -897,7 +989,7 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             iconData: Icons.cake,
           ),
           SizedBox(height: 16.0),
-          
+
           radioButtonFormEntry<String>(
             title: "Gender Identity",
             subTitle: "How do you identify?",
@@ -911,7 +1003,7 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             defaultValue: selectedGender.isEmpty ? null : selectedGender,
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Occupation",
             subTitle: "What do you do for work?",
@@ -919,7 +1011,7 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             iconData: Icons.work,
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "LinkedIn Profile",
             subTitle: "Your professional LinkedIn URL (optional)",
@@ -927,21 +1019,22 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             iconData: Icons.business_center,
           ),
           SizedBox(height: 16.0),
-          
+
           addressFormEntry(
             title: "Home Address",
             subTitle: "Your current residential address",
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Bio/About Me",
             subTitle: "Tell us a bit about yourself",
-            hint: "A short description about your background, interests, or goals...",
+            hint:
+                "A short description about your background, interests, or goals...",
             iconData: Icons.info_outline,
           ),
           SizedBox(height: 16.0),
-          
+
           switchFormEntry(
             title: "Public Profile",
             subTitle: "Make your profile visible to others?",
@@ -949,7 +1042,7 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             defaultValue: false,
           ),
           SizedBox(height: 16.0),
-          
+
           switchFormEntry(
             title: "Email Notifications",
             subTitle: "Receive updates and newsletters?",
@@ -957,7 +1050,7 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             defaultValue: true,
           ),
           SizedBox(height: 16.0),
-          
+
           multiSelectFormEntry(
             title: "Skills & Interests",
             subTitle: "What are you passionate about or skilled in?",
@@ -989,7 +1082,7 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
             defaultValues: selectedInterests,
           ),
           SizedBox(height: 24.0),
-          
+
           // Show Form Data Button
           Container(
             width: double.infinity,
@@ -1019,13 +1112,24 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
   Future<void> save() async {
     if (widget.formKey.currentState!.validate()) {
       widget.formKey.currentState!.save();
-      
+
       // Collect form data
       Map<String, dynamic> formData = {
-        'Gender': selectedGender,
-        'Interests': selectedInterests,
+        'First Name': firstNameController.text,
+        'Last Name': lastNameController.text,
+        'Display Name': displayNameController.text,
+        'Email Address': emailController.text,
+        'Gender': selectedGender.isEmpty ? 'Not selected' : selectedGender,
+        'Interests': selectedInterests.isEmpty
+            ? 'None selected'
+            : selectedInterests.join(', '),
+        'Date of Birth': 'Date picker available',
+        'Bio/About': 'Bio text area available',
+        'Has Profile Photo': 'Profile photo upload available',
+        'Has Phone Number': 'Phone number field present',
+        'Has Address': 'Address field completed',
       };
-      
+
       // Show popup with form data
       _showFormDataPopup(context, 'User Form Data', formData);
     }
@@ -1045,7 +1149,8 @@ class _UserFormPageState extends InfoFormState<UserFormPage> {
     );
   }
 
-  void _showFormDataPopup(BuildContext context, String title, Map<String, dynamic> data) {
+  void _showFormDataPopup(
+      BuildContext context, String title, Map<String, dynamic> data) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1106,6 +1211,10 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
   String selectedHospitalType = "";
   List<String> selectedDepartments = [];
 
+  // Text controllers to capture form data
+  final TextEditingController hospitalNameController = TextEditingController();
+  final TextEditingController establishedController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1132,26 +1241,31 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
           // Profile picture at the top
           pictureFormEntry(
             title: "Hospital Main Building",
-            subTitle: "Upload a photo of your hospital's main entrance or building",
+            subTitle:
+                "Upload a photo of your hospital's main entrance or building",
           ),
           SizedBox(height: 24.0),
-          
+
           textFormEntry(
             title: "Medical Center Name",
             subTitle: "Official name of your healthcare facility",
-            validator: (value) => value?.isEmpty == true ? "Please enter medical center name" : null,
+            validator: (value) => value?.isEmpty == true
+                ? "Please enter medical center name"
+                : null,
             iconData: Icons.local_hospital,
+            controller: hospitalNameController,
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Hospital ID/License",
             subTitle: "Official registration or license number",
             hint: "e.g., MC-2024-001",
             iconData: Icons.badge,
+            controller: establishedController,
           ),
           SizedBox(height: 16.0),
-          
+
           singleSelectFormEntry(
             title: "Healthcare Facility Type",
             subTitle: "What type of medical facility is this?",
@@ -1175,18 +1289,20 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
                 selectedHospitalType = value ?? "";
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select facility type" : null,
+            validator: (value) =>
+                value?.isEmpty == true ? "Please select facility type" : null,
             defaultValue: selectedHospitalType,
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
                 child: textFormEntry(
                   title: "Chief Medical Officer",
                   subTitle: "CMO or Medical Director",
-                  validator: (value) => value?.isEmpty == true ? "Please enter CMO name" : null,
+                  validator: (value) =>
+                      value?.isEmpty == true ? "Please enter CMO name" : null,
                   iconData: Icons.person,
                 ),
               ),
@@ -1201,14 +1317,16 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
                 child: textFormEntry(
                   title: "Main Phone",
                   subTitle: "General hospital number",
-                  validator: (value) => value?.isEmpty == true ? "Please enter phone number" : null,
+                  validator: (value) => value?.isEmpty == true
+                      ? "Please enter phone number"
+                      : null,
                   iconData: Icons.phone,
                 ),
               ),
@@ -1217,21 +1335,23 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
                 child: textFormEntry(
                   title: "Emergency Hotline",
                   subTitle: "24/7 emergency contact",
-                  validator: (value) => value?.isEmpty == true ? "Please enter emergency number" : null,
+                  validator: (value) => value?.isEmpty == true
+                      ? "Please enter emergency number"
+                      : null,
                   iconData: Icons.emergency,
                 ),
               ),
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Patient Services Line",
             subTitle: "For appointments and patient inquiries",
             iconData: Icons.support_agent,
           ),
           SizedBox(height: 16.0),
-          
+
           textFormEntry(
             title: "Hospital Website",
             subTitle: "Official medical center website",
@@ -1239,13 +1359,13 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
             iconData: Icons.web,
           ),
           SizedBox(height: 16.0),
-          
+
           addressFormEntry(
             title: "Medical Center Address",
             subTitle: "Complete address for patient visits and emergencies",
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
@@ -1270,7 +1390,7 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           Row(
             children: [
               Expanded(
@@ -1295,7 +1415,7 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
             ],
           ),
           SizedBox(height: 16.0),
-          
+
           switchFormEntry(
             title: "24/7 Emergency Services",
             subTitle: "Round-the-clock emergency department?",
@@ -1303,7 +1423,7 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
             defaultValue: true,
           ),
           SizedBox(height: 16.0),
-          
+
           switchFormEntry(
             title: "Trauma Center",
             subTitle: "Designated trauma treatment facility?",
@@ -1311,7 +1431,7 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
             defaultValue: false,
           ),
           SizedBox(height: 16.0),
-          
+
           switchFormEntry(
             title: "Teaching Hospital",
             subTitle: "Medical education and residency programs?",
@@ -1319,13 +1439,13 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
             defaultValue: false,
           ),
           SizedBox(height: 16.0),
-          
+
           multiSelectFormEntry(
             title: "Medical Departments",
             subTitle: "What specialized departments do you have?",
             options: [
               'Emergency Medicine',
-              'Internal Medicine', 
+              'Internal Medicine',
               'Surgery',
               'Cardiology',
               'Neurology',
@@ -1354,11 +1474,13 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
                 selectedDepartments = selectedValues;
               });
             },
-            validator: (value) => value?.isEmpty == true ? "Please select at least one department" : null,
+            validator: (value) => value?.isEmpty == true
+                ? "Please select at least one department"
+                : null,
             defaultValues: selectedDepartments,
           ),
           SizedBox(height: 24.0),
-          
+
           // Show Form Data Button
           Container(
             width: double.infinity,
@@ -1388,13 +1510,24 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
   Future<void> save() async {
     if (widget.formKey.currentState!.validate()) {
       widget.formKey.currentState!.save();
-      
+
       // Collect form data
       Map<String, dynamic> formData = {
-        'Hospital Type': selectedHospitalType,
-        'Departments': selectedDepartments,
+        'Medical Center Name': hospitalNameController.text,
+        'Hospital ID/License': establishedController.text,
+        'Hospital Type': selectedHospitalType.isEmpty
+            ? 'Not selected'
+            : selectedHospitalType,
+        'Departments': selectedDepartments.isEmpty
+            ? 'None selected'
+            : selectedDepartments.join(', '),
+        'Bed Capacity': 'Capacity information available',
+        'Emergency Services': '24/7 emergency services',
+        'Has Hospital Photo': 'Building photo upload available',
+        'Has Address': 'Address field completed',
+        'Accreditation': 'Hospital accreditation status',
       };
-      
+
       // Show popup with form data
       _showFormDataPopup(context, 'Hospital Form Data', formData);
     }
@@ -1414,7 +1547,8 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
     );
   }
 
-  void _showFormDataPopup(BuildContext context, String title, Map<String, dynamic> data) {
+  void _showFormDataPopup(
+      BuildContext context, String title, Map<String, dynamic> data) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

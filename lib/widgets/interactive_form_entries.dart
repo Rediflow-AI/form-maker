@@ -6,7 +6,6 @@ import '../utils/input_styles.dart';
 
 /// A collection of interactive form entry widgets (switches, numbers, etc.)
 class InteractiveFormEntries {
-  
   /// Switch/toggle form field
   static Widget switchFormEntry({
     String title = 'Switch',
@@ -48,10 +47,7 @@ class InteractiveFormEntries {
                     const SizedBox(height: 4),
                     Text(
                       subTitle,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                   ],
                 ],
@@ -59,14 +55,18 @@ class InteractiveFormEntries {
             ),
             const SizedBox(width: 16),
             MouseRegion(
-              cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+              cursor: enabled
+                  ? SystemMouseCursors.click
+                  : SystemMouseCursors.basic,
               child: FlutterSwitch(
                 value: defaultValue,
-                onToggle: enabled ? (value) {
-                  onToggle(value);
-                  formKey?.currentState?.save();
-                  onModified?.call();
-                } : (value) {},
+                onToggle: enabled
+                    ? (value) {
+                        onToggle(value);
+                        formKey?.currentState?.save();
+                        onModified?.call();
+                      }
+                    : (value) {},
                 activeColor: primaryActiveColor,
                 inactiveColor: Colors.grey[300]!,
                 disabled: !enabled,
@@ -177,10 +177,7 @@ class _FormEntryWrapper {
           if (subTitle != null) ...[
             Text(
               subTitle,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 12),
           ],

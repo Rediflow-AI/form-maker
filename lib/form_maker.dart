@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinbox/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:image_picker/image_picker.dart';
@@ -126,7 +127,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           selectedImage = File(image.path);
           selectedImageBytes = null;
         }
-        
+
         if (widget.onImageSelected != null) {
           widget.onImageSelected!(selectedImage);
         }
@@ -183,8 +184,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     String subTitle = 'you can change the picture',
     String? defaultValue,
   }) {
-    bool hasImage = (defaultValue != null && defaultValue.isNotEmpty) ||
-        selectedImage != null || selectedImageBytes != null;
+    bool hasImage =
+        (defaultValue != null && defaultValue.isNotEmpty) ||
+        selectedImage != null ||
+        selectedImageBytes != null;
 
     return formEntry(
       title: title,
@@ -218,8 +221,8 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                       backgroundImage: kIsWeb && selectedImageBytes != null
                           ? MemoryImage(selectedImageBytes!)
                           : selectedImage != null
-                              ? FileImage(selectedImage!)
-                              : CachedNetworkImageProvider(defaultValue!),
+                          ? FileImage(selectedImage!)
+                          : CachedNetworkImageProvider(defaultValue!),
                     )
                   : CircleAvatar(
                       radius: 60,
@@ -232,7 +235,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                     ),
             ),
             SizedBox(height: 24),
-            
+
             // Action Buttons Section
             Row(
               children: [
@@ -254,7 +257,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryActiveColor,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -263,7 +269,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                     ),
                   ),
                 ),
-                
+
                 if (hasImage) ...[
                   SizedBox(width: 12),
                   // Remove Button
@@ -284,7 +290,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                         ),
                       ),
                       style: OutlinedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -295,16 +304,13 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                 ],
               ],
             ),
-            
+
             // Helper Text
             if (!hasImage) ...[
               SizedBox(height: 12),
               Text(
                 'Upload a photo to personalize your profile',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -322,6 +328,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     Function(String?)? onSaved,
     String? Function(String?)? validator,
     String? defaultValue,
+    TextEditingController? controller,
   }) {
     return formEntry(
       title: title,
@@ -335,7 +342,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         },
         style: Theme.of(context).textTheme.bodyLarge,
         enabled: isEdit,
-        controller: TextEditingController(text: defaultValue),
+        controller: controller ?? TextEditingController(text: defaultValue),
         decoration: elegantInputDecoration(
           hintText: hint,
           prefix: Icon(iconData),
@@ -479,19 +486,19 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                     isEditable: isEdit,
                     defaultNumber:
                         defaultValue != null &&
-                                defaultValue.isNotEmpty &&
-                                defaultValue.length > 10
-                            ? defaultValue.substring(
-                                defaultValue.length - 10,
-                                defaultValue.length,
-                              )
-                            : null,
+                            defaultValue.isNotEmpty &&
+                            defaultValue.length > 10
+                        ? defaultValue.substring(
+                            defaultValue.length - 10,
+                            defaultValue.length,
+                          )
+                        : null,
                     defaultCountryCode:
                         defaultValue != null &&
-                                defaultValue.isNotEmpty &&
-                                defaultValue.length > 10
-                            ? defaultValue.substring(0, defaultValue.length - 10)
-                            : null,
+                            defaultValue.isNotEmpty &&
+                            defaultValue.length > 10
+                        ? defaultValue.substring(0, defaultValue.length - 10)
+                        : null,
                     onChanged: (value) {
                       widget.formKey.currentState!.save();
                       if (widget.onModified != null) {
@@ -658,6 +665,11 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
       subTitle: subTitle,
       inputWidget: TextFormField(
         style: Theme.of(context).textTheme.bodyLarge,
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(10), // Limit to 10 digits
+        ],
         onChanged: (_) {
           widget.formKey.currentState!.save();
           if (widget.onModified != null) {
@@ -667,12 +679,14 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         enabled: isEdit,
         controller: TextEditingController(text: defaultValue),
         decoration: elegantInputDecoration(
-          hintText: 'Postal Code',
+          hintText: 'Postal Code (numbers only)',
           prefix: const Icon(Icons.post_add),
         ),
         validator: (value) => value!.isEmpty
             ? 'Postal code is required'
-            : (value.isValidPostalCode() ? null : 'Invalid postal code'),
+            : (value.length < 5 || value.length > 10
+                  ? 'Postal code must be 5-10 digits'
+                  : null),
         onSaved: onSaved,
       ),
     );
@@ -814,10 +828,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                     SizedBox(height: 4),
                     Text(
                       subTitle,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                   ],
                 ],
@@ -825,7 +836,9 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
             ),
             SizedBox(width: 16),
             MouseRegion(
-              cursor: isEdit ? SystemMouseCursors.click : SystemMouseCursors.basic,
+              cursor: isEdit
+                  ? SystemMouseCursors.click
+                  : SystemMouseCursors.basic,
               child: FlutterSwitch(
                 value: defaultValue,
                 onToggle: isEdit ? onToggle : (value) {},
@@ -1269,7 +1282,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           return DropdownMenuItem<String>(
             value: option,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
               child: Text(
                 option,
                 style: const TextStyle(
@@ -1494,7 +1510,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     int maxImages = 5,
   }) {
     selectedImages ??= [];
-    
+
     return formEntry(
       title: title,
       subTitle: subTitle,
@@ -1502,13 +1518,16 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Display selected images
-          if ((selectedImages.isNotEmpty) || (kIsWeb && _webSelectedImages.isNotEmpty))
+          if ((selectedImages.isNotEmpty) ||
+              (kIsWeb && _webSelectedImages.isNotEmpty))
             Container(
               height: 140,
               margin: EdgeInsets.only(bottom: 16),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: kIsWeb ? _webSelectedImages.length : selectedImages.length,
+                itemCount: kIsWeb
+                    ? _webSelectedImages.length
+                    : selectedImages.length,
                 itemBuilder: (context, index) {
                   return Container(
                     margin: EdgeInsets.only(right: 12),
@@ -1531,7 +1550,8 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                             borderRadius: BorderRadius.circular(12),
                             child: kIsWeb
                                 ? FutureBuilder<Uint8List>(
-                                    future: _webSelectedImages[index].readAsBytes(),
+                                    future: _webSelectedImages[index]
+                                        .readAsBytes(),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         return Image.memory(
@@ -1546,12 +1566,17 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                                         height: 110,
                                         decoration: BoxDecoration(
                                           color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         child: Center(
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(primaryActiveColor),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  primaryActiveColor,
+                                                ),
                                           ),
                                         ),
                                       );
@@ -1572,12 +1597,16 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                             child: GestureDetector(
                               onTap: () {
                                 if (kIsWeb) {
-                                  final updatedXFiles = List<XFile>.from(_webSelectedImages);
+                                  final updatedXFiles = List<XFile>.from(
+                                    _webSelectedImages,
+                                  );
                                   updatedXFiles.removeAt(index);
                                   _webSelectedImages = updatedXFiles;
                                   onXFilesSelected?.call(updatedXFiles);
                                 } else {
-                                  final updatedImages = List<File>.from(selectedImages!);
+                                  final updatedImages = List<File>.from(
+                                    selectedImages!,
+                                  );
                                   updatedImages.removeAt(index);
                                   onImagesSelected?.call(updatedImages);
                                 }
@@ -1614,8 +1643,9 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
             ),
           SizedBox(height: normalPadding),
           // Add photo buttons
-          if (((kIsWeb && _webSelectedImages.length < maxImages) || 
-               (!kIsWeb && selectedImages.length < maxImages)) && isEdit)
+          if (((kIsWeb && _webSelectedImages.length < maxImages) ||
+                  (!kIsWeb && selectedImages.length < maxImages)) &&
+              isEdit)
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[50],
@@ -1634,15 +1664,19 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                             final XFile? image = await picker.pickImage(
                               source: ImageSource.camera,
                             );
-                            
+
                             if (image != null) {
                               if (kIsWeb) {
-                                final updatedXFiles = List<XFile>.from(_webSelectedImages)..add(image);
+                                final updatedXFiles = List<XFile>.from(
+                                  _webSelectedImages,
+                                )..add(image);
                                 _webSelectedImages = updatedXFiles;
                                 onXFilesSelected?.call(updatedXFiles);
                               } else {
                                 final newFile = File(image.path);
-                                final updatedImages = List<File>.from(selectedImages!)..add(newFile);
+                                final updatedImages = List<File>.from(
+                                  selectedImages!,
+                                )..add(newFile);
                                 onImagesSelected?.call(updatedImages);
                               }
                               widget.formKey.currentState?.save();
@@ -1657,7 +1691,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryActiveColor,
                             foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -1670,28 +1707,41 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                         child: ElevatedButton.icon(
                           onPressed: () async {
                             final ImagePicker picker = ImagePicker();
-                            final List<XFile> images = await picker.pickMultiImage();
-                            
+                            final List<XFile> images = await picker
+                                .pickMultiImage();
+
                             if (images.isNotEmpty) {
                               if (kIsWeb) {
-                                final updatedXFiles = List<XFile>.from(_webSelectedImages)..addAll(images);
-                                
+                                final updatedXFiles = List<XFile>.from(
+                                  _webSelectedImages,
+                                )..addAll(images);
+
                                 // Ensure we don't exceed max images
                                 if (updatedXFiles.length > maxImages) {
-                                  updatedXFiles.removeRange(maxImages, updatedXFiles.length);
+                                  updatedXFiles.removeRange(
+                                    maxImages,
+                                    updatedXFiles.length,
+                                  );
                                 }
-                                
+
                                 _webSelectedImages = updatedXFiles;
                                 onXFilesSelected?.call(updatedXFiles);
                               } else {
-                                final newFiles = images.map((image) => File(image.path)).toList();
-                                final updatedImages = List<File>.from(selectedImages!)..addAll(newFiles);
-                                
+                                final newFiles = images
+                                    .map((image) => File(image.path))
+                                    .toList();
+                                final updatedImages = List<File>.from(
+                                  selectedImages!,
+                                )..addAll(newFiles);
+
                                 // Ensure we don't exceed max images
                                 if (updatedImages.length > maxImages) {
-                                  updatedImages.removeRange(maxImages, updatedImages.length);
+                                  updatedImages.removeRange(
+                                    maxImages,
+                                    updatedImages.length,
+                                  );
                                 }
-                                
+
                                 onImagesSelected?.call(updatedImages);
                               }
                               widget.formKey.currentState?.save();
@@ -1706,7 +1756,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.teal,
                             foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -1720,14 +1773,15 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.info_outline, size: 14, color: Colors.grey[600]),
+                      Icon(
+                        Icons.info_outline,
+                        size: 14,
+                        color: Colors.grey[600],
+                      ),
                       SizedBox(width: 4),
                       Text(
                         'You can select multiple photos from gallery',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
                     ],
                   ),
@@ -1737,13 +1791,10 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           SizedBox(height: smallPadding),
           // Photo count indicator
           Text(
-            kIsWeb 
+            kIsWeb
                 ? 'Photos: ${_webSelectedImages.length}/$maxImages'
                 : 'Photos: ${selectedImages.length}/$maxImages',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 12),
           ),
         ],
       ),

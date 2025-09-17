@@ -3,7 +3,6 @@ import '../utils/input_styles.dart';
 
 /// A collection of text-based form entry widgets
 class TextFormEntries {
-  
   /// Generic text form field
   static Widget textFormEntry({
     String title = 'Text',
@@ -34,7 +33,8 @@ class TextFormEntries {
           hintText: hint,
           prefix: Icon(iconData),
         ),
-        validator: validator ?? (value) => value?.isEmpty == true ? 'Required' : null,
+        validator:
+            validator ?? (value) => value?.isEmpty == true ? 'Required' : null,
         onSaved: onSaved,
       ),
     );
@@ -69,11 +69,14 @@ class TextFormEntries {
           hintText: hint,
           prefix: const Icon(Icons.email),
         ),
-        validator: validator ?? (value) {
-          if (value?.isEmpty == true) return 'Email is required';
-          if (value?.contains('@') != true) return 'Please enter a valid email';
-          return null;
-        },
+        validator:
+            validator ??
+            (value) {
+              if (value?.isEmpty == true) return 'Email is required';
+              if (value?.contains('@') != true)
+                return 'Please enter a valid email';
+              return null;
+            },
         onSaved: onSaved,
         keyboardType: TextInputType.emailAddress,
       ),
@@ -109,12 +112,14 @@ class TextFormEntries {
           hintText: hint,
           prefix: const Icon(Icons.web),
         ),
-        validator: validator ?? (value) {
-          if (value?.isNotEmpty == true && !value!.startsWith('http')) {
-            return 'Please enter a valid URL';
-          }
-          return null;
-        },
+        validator:
+            validator ??
+            (value) {
+              if (value?.isNotEmpty == true && !value!.startsWith('http')) {
+                return 'Please enter a valid URL';
+              }
+              return null;
+            },
         onSaved: onSaved,
         keyboardType: TextInputType.url,
       ),
@@ -187,10 +192,7 @@ class _FormEntryWrapper {
           if (subTitle != null) ...[
             Text(
               subTitle,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 12),
           ],

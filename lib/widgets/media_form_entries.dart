@@ -8,7 +8,6 @@ import '../utils/constants.dart';
 
 /// A collection of media-related form entry widgets
 class MediaFormEntries {
-  
   /// Single picture form field
   static Widget pictureFormEntry({
     String title = 'Picture',
@@ -21,8 +20,10 @@ class MediaFormEntries {
     bool enabled = true,
     required BuildContext context,
   }) {
-    bool hasImage = (defaultValue != null && defaultValue.isNotEmpty) ||
-        selectedImage != null || selectedImageBytes != null;
+    bool hasImage =
+        (defaultValue != null && defaultValue.isNotEmpty) ||
+        selectedImage != null ||
+        selectedImageBytes != null;
 
     return _FormEntryWrapper.formEntry(
       title: title,
@@ -57,8 +58,8 @@ class MediaFormEntries {
                       backgroundImage: kIsWeb && selectedImageBytes != null
                           ? MemoryImage(selectedImageBytes)
                           : selectedImage != null
-                              ? FileImage(selectedImage)
-                              : CachedNetworkImageProvider(defaultValue!),
+                          ? FileImage(selectedImage)
+                          : CachedNetworkImageProvider(defaultValue!),
                     )
                   : CircleAvatar(
                       radius: 60,
@@ -71,7 +72,7 @@ class MediaFormEntries {
                     ),
             ),
             const SizedBox(height: 24),
-            
+
             // Action Buttons Section
             Row(
               children: [
@@ -93,7 +94,10 @@ class MediaFormEntries {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryActiveColor,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -102,7 +106,7 @@ class MediaFormEntries {
                     ),
                   ),
                 ),
-                
+
                 if (hasImage) ...[
                   const SizedBox(width: 12),
                   // Remove Button
@@ -123,7 +127,10 @@ class MediaFormEntries {
                         ),
                       ),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -134,16 +141,13 @@ class MediaFormEntries {
                 ],
               ],
             ),
-            
+
             // Helper Text
             if (!hasImage) ...[
               const SizedBox(height: 12),
               Text(
                 'Upload a photo to personalize your profile',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -178,13 +182,16 @@ class MediaFormEntries {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Display selected images
-          if ((selectedImages.isNotEmpty) || (kIsWeb && webSelectedImages.isNotEmpty))
+          if ((selectedImages.isNotEmpty) ||
+              (kIsWeb && webSelectedImages.isNotEmpty))
             Container(
               height: 140,
               margin: const EdgeInsets.only(bottom: 16),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: kIsWeb ? webSelectedImages.length : selectedImages.length,
+                itemCount: kIsWeb
+                    ? webSelectedImages.length
+                    : selectedImages.length,
                 itemBuilder: (context, index) {
                   return Container(
                     margin: const EdgeInsets.only(right: 12),
@@ -207,7 +214,8 @@ class MediaFormEntries {
                             borderRadius: BorderRadius.circular(12),
                             child: kIsWeb
                                 ? FutureBuilder<Uint8List>(
-                                    future: webSelectedImages![index].readAsBytes(),
+                                    future: webSelectedImages![index]
+                                        .readAsBytes(),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         return Image.memory(
@@ -222,12 +230,17 @@ class MediaFormEntries {
                                         height: 110,
                                         decoration: BoxDecoration(
                                           color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         child: Center(
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(primaryActiveColor),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  primaryActiveColor,
+                                                ),
                                           ),
                                         ),
                                       );
@@ -248,11 +261,15 @@ class MediaFormEntries {
                             child: GestureDetector(
                               onTap: () {
                                 if (kIsWeb) {
-                                  final updatedXFiles = List<XFile>.from(webSelectedImages!);
+                                  final updatedXFiles = List<XFile>.from(
+                                    webSelectedImages!,
+                                  );
                                   updatedXFiles.removeAt(index);
                                   onXFilesSelected?.call(updatedXFiles);
                                 } else {
-                                  final updatedImages = List<File>.from(selectedImages!);
+                                  final updatedImages = List<File>.from(
+                                    selectedImages!,
+                                  );
                                   updatedImages.removeAt(index);
                                   onImagesSelected?.call(updatedImages);
                                 }
@@ -288,8 +305,9 @@ class MediaFormEntries {
               ),
             ),
           // Add photo buttons
-          if (((kIsWeb && webSelectedImages.length < maxImages) || 
-               (!kIsWeb && selectedImages.length < maxImages)) && enabled)
+          if (((kIsWeb && webSelectedImages.length < maxImages) ||
+                  (!kIsWeb && selectedImages.length < maxImages)) &&
+              enabled)
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[50],
@@ -308,14 +326,18 @@ class MediaFormEntries {
                             final XFile? image = await picker.pickImage(
                               source: ImageSource.camera,
                             );
-                            
+
                             if (image != null) {
                               if (kIsWeb) {
-                                final updatedXFiles = List<XFile>.from(webSelectedImages!)..add(image);
+                                final updatedXFiles = List<XFile>.from(
+                                  webSelectedImages!,
+                                )..add(image);
                                 onXFilesSelected?.call(updatedXFiles);
                               } else {
                                 final newFile = File(image.path);
-                                final updatedImages = List<File>.from(selectedImages!)..add(newFile);
+                                final updatedImages = List<File>.from(
+                                  selectedImages!,
+                                )..add(newFile);
                                 onImagesSelected?.call(updatedImages);
                               }
                               formKey?.currentState?.save();
@@ -330,7 +352,10 @@ class MediaFormEntries {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryActiveColor,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -343,27 +368,40 @@ class MediaFormEntries {
                         child: ElevatedButton.icon(
                           onPressed: () async {
                             final ImagePicker picker = ImagePicker();
-                            final List<XFile> images = await picker.pickMultiImage();
-                            
+                            final List<XFile> images = await picker
+                                .pickMultiImage();
+
                             if (images.isNotEmpty) {
                               if (kIsWeb) {
-                                final updatedXFiles = List<XFile>.from(webSelectedImages!)..addAll(images);
-                                
+                                final updatedXFiles = List<XFile>.from(
+                                  webSelectedImages!,
+                                )..addAll(images);
+
                                 // Ensure we don't exceed max images
                                 if (updatedXFiles.length > maxImages) {
-                                  updatedXFiles.removeRange(maxImages, updatedXFiles.length);
+                                  updatedXFiles.removeRange(
+                                    maxImages,
+                                    updatedXFiles.length,
+                                  );
                                 }
-                                
+
                                 onXFilesSelected?.call(updatedXFiles);
                               } else {
-                                final newFiles = images.map((image) => File(image.path)).toList();
-                                final updatedImages = List<File>.from(selectedImages!)..addAll(newFiles);
-                                
+                                final newFiles = images
+                                    .map((image) => File(image.path))
+                                    .toList();
+                                final updatedImages = List<File>.from(
+                                  selectedImages!,
+                                )..addAll(newFiles);
+
                                 // Ensure we don't exceed max images
                                 if (updatedImages.length > maxImages) {
-                                  updatedImages.removeRange(maxImages, updatedImages.length);
+                                  updatedImages.removeRange(
+                                    maxImages,
+                                    updatedImages.length,
+                                  );
                                 }
-                                
+
                                 onImagesSelected?.call(updatedImages);
                               }
                               formKey?.currentState?.save();
@@ -378,7 +416,10 @@ class MediaFormEntries {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.teal,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -392,14 +433,15 @@ class MediaFormEntries {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.info_outline, size: 14, color: Colors.grey[600]),
+                      Icon(
+                        Icons.info_outline,
+                        size: 14,
+                        color: Colors.grey[600],
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'You can select multiple photos from gallery',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
                     ],
                   ),
@@ -409,13 +451,10 @@ class MediaFormEntries {
           const SizedBox(height: 8),
           // Photo count indicator
           Text(
-            kIsWeb 
+            kIsWeb
                 ? 'Photos: ${webSelectedImages.length}/$maxImages'
                 : 'Photos: ${selectedImages.length}/$maxImages',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 12),
           ),
         ],
       ),
@@ -450,10 +489,7 @@ class _FormEntryWrapper {
           if (subTitle != null) ...[
             Text(
               subTitle,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 12),
           ],

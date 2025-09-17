@@ -4,7 +4,6 @@ import '../utils/input_styles.dart';
 
 /// A collection of selection-based form entry widgets
 class SelectionFormEntries {
-  
   /// Single select dropdown form field
   static Widget singleSelectFormEntry({
     String title = 'Select Option',
@@ -63,7 +62,10 @@ class SelectionFormEntries {
           return DropdownMenuItem<String>(
             value: option,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
               child: Text(
                 option,
                 style: const TextStyle(
@@ -82,11 +84,12 @@ class SelectionFormEntries {
                 onModified?.call();
               }
             : null,
-        validator: validator ??
+        validator:
+            validator ??
             (isRequired
                 ? (value) => value == null || value.isEmpty
-                    ? '$title is required'
-                    : null
+                      ? '$title is required'
+                      : null
                 : null),
       ),
     );
@@ -140,10 +143,7 @@ class SelectionFormEntries {
             fontWeight: FontWeight.w400,
           ),
         ),
-        buttonIcon: Icon(
-          Icons.keyboard_arrow_down,
-          color: Colors.grey[600],
-        ),
+        buttonIcon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[600]),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey[300]!, width: 1.0),
@@ -196,11 +196,7 @@ class SelectionFormEntries {
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
-          icon: const Icon(
-            Icons.close,
-            size: 18,
-            color: Colors.grey,
-          ),
+          icon: const Icon(Icons.close, size: 18, color: Colors.grey),
         ),
         initialValue: defaultValues,
         onConfirm: (values) {
@@ -210,11 +206,12 @@ class SelectionFormEntries {
             onModified?.call();
           }
         },
-        validator: validator ??
+        validator:
+            validator ??
             (isRequired
                 ? (values) => values?.isEmpty == true
-                    ? 'Please select at least one $title'
-                    : null
+                      ? 'Please select at least one $title'
+                      : null
                 : null),
       ),
     );
@@ -256,11 +253,13 @@ class SelectionFormEntries {
             ),
             value: option,
             groupValue: defaultValue,
-            onChanged: enabled ? (T? value) {
-              onChanged(value);
-              formKey?.currentState?.save();
-              onModified?.call();
-            } : null,
+            onChanged: enabled
+                ? (T? value) {
+                    onChanged(value);
+                    formKey?.currentState?.save();
+                    onModified?.call();
+                  }
+                : null,
             activeColor: Colors.blue,
             contentPadding: EdgeInsets.zero,
           );
@@ -303,11 +302,13 @@ class SelectionFormEntries {
               ),
             ),
             value: selectedOptions[option] ?? false,
-            onChanged: enabled ? (bool? value) {
-              onChanged(option, value ?? false);
-              formKey?.currentState?.save();
-              onModified?.call();
-            } : null,
+            onChanged: enabled
+                ? (bool? value) {
+                    onChanged(option, value ?? false);
+                    formKey?.currentState?.save();
+                    onModified?.call();
+                  }
+                : null,
             activeColor: Colors.blue,
             contentPadding: EdgeInsets.zero,
           );
@@ -344,10 +345,7 @@ class _FormEntryWrapper {
           if (subTitle != null) ...[
             Text(
               subTitle,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 12),
           ],
