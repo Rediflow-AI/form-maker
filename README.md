@@ -38,7 +38,7 @@ flutter pub get
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:form_maker/form_maker_library.dart';
+import 'package:rediflow_form_maker/form_maker_library.dart';
 
 class MyFormPage extends InfoForm {
   MyFormPage({Key? key}) : super(
