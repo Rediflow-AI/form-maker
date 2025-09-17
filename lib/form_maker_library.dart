@@ -12,7 +12,11 @@ export 'models/user.dart';
 export 'widgets/address_field.dart';
 export 'widgets/buttons.dart';
 export 'widgets/expandable_dropdown_textfield.dart';
+export 'widgets/interactive_form_entries.dart';
+export 'widgets/media_form_entries.dart';
 export 'widgets/phone_field.dart';
+export 'widgets/selection_form_entries.dart';
+export 'widgets/text_form_entries.dart';
 export 'widgets/working_hours_selector.dart';
 
 // Export utilities
