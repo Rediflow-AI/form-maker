@@ -1,5 +1,9 @@
 # Rediflow Form Maker
 
+[![pub package](https://img.shields.io/pub/v/rediflow_form_maker.svg)](https://pub.dev/packages/rediflow_form_maker)
+[![GitHub](https://img.shields.io/github/license/Rediflow-AI/form-maker)](https://github.com/Rediflow-AI/form-maker/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Rediflow-AI/form-maker)](https://github.com/Rediflow-AI/form-maker/stargazers)
+
 A comprehensive Flutter package for creating beautiful and functional forms with pre-built components like text fields, dropdowns, image pickers, and more.
 
 ## Features
