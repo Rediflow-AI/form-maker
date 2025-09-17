@@ -1,6 +1,6 @@
 name: form_maker
 description: "A comprehensive Flutter package for creating beautiful and functional forms with pre-built components including text fields, dropdowns, image pickers, address fields, phone inputs, working hours selectors, and more."
-version: 0.0.1
+version: 0.0.5
 homepage: https://github.com/Rediflow-AI/form-maker
 repository: https://github.com/Rediflow-AI/form-maker
 issue_tracker: https://github.com/Rediflow-AI/form-maker/issues
