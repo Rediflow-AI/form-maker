@@ -1,4 +1,4 @@
-# Form Maker
+# Rediflow Form Maker
 
 A comprehensive Flutter package for creating beautiful and functional forms with pre-built components like text fields, dropdowns, image pickers, and more.
 
@@ -24,7 +24,7 @@ Add this package to your Flutter project:
 
 ```yaml
 dependencies:
-  form_maker: ^0.0.1
+  rediflow_form_maker: ^0.0.1
 ```
 
 Then run:
