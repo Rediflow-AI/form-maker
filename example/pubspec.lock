@@ -208,13 +208,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  form_maker:
-    dependency: "direct main"
-    description:
-      path: ".."
-      relative: true
-    source: path
-    version: "0.0.1"
   http:
     dependency: transitive
     description:
@@ -447,6 +440,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  rediflow_form_maker:
+    dependency: "direct main"
+    description:
+      path: ".."
+      relative: true
+    source: path
+    version: "0.0.1"
   rxdart:
     dependency: transitive
     description:

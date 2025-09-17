@@ -1,5 +1,5 @@
-name: form_maker_example
-description: Example app for the Form Maker package
+name: rediflow_form_maker_example
+description: Example app for the Rediflow Form Maker package
 
 publish_to: 'none'
 
@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  form_maker:
+  rediflow_form_maker:
     path: ../
   image_picker: ^1.0.4
 

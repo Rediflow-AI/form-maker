@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:form_maker/form_maker_library.dart';
+import 'package:rediflow_form_maker/form_maker_library.dart';
 
 void main() {
   test('Address model test', () {
