@@ -20,7 +20,7 @@ class _DaysAsRowsGridState extends State<DaysAsRowsGrid> {
   late ScrollController _verticalController;
   late ScrollController _horizontalHeaderController;
   late ScrollController _verticalHeaderController;
-  
+
   bool _isUpdatingHorizontal = false;
   bool _isUpdatingVertical = false;
 

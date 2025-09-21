@@ -14,10 +14,14 @@ import 'widgets/address_field.dart';
 import 'widgets/buttons.dart';
 import 'widgets/phone_field.dart';
 import 'widgets/working_hours_selector.dart';
+import 'widgets/working_hours_models.dart';
 import 'widgets/text_form_entries.dart';
 import 'widgets/selection_form_entries.dart';
 import 'widgets/interactive_form_entries.dart';
 import 'widgets/media_form_entries.dart';
+import 'utils/constants.dart';
+import 'utils/extensions.dart';
+import 'utils/input_styles.dart';
 
 /// Abstract base class for creating forms with consistent styling and functionality
 abstract class InfoForm extends StatefulWidget {
@@ -528,6 +532,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     String subTitle = 'Set working hours',
     Function(List<WorkingHour>)? onChanged,
     List<WorkingHour>? defaultValue,
+    WorkingHoursLayout layout = WorkingHoursLayout.daysAsRows,
   }) {
     return formEntry(
       title: title,
@@ -542,7 +547,34 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           }
         },
         workingHours: defaultValue ?? [],
+        layout: layout,
       ),
+    );
+  }
+
+  /// Postal code form field
+  Widget postalCodeFormEntry({
+    String title = 'Postal Code',
+    String subTitle = 'Enter postal code',
+    Function(String?)? onSaved,
+    String? defaultValue,
+  }) {
+    return TextFormEntries.textFormEntry(
+      title: title,
+      subTitle: subTitle,
+      hint: 'Postal Code (numbers only)',
+      iconData: Icons.post_add,
+      onSaved: onSaved,
+      defaultValue: defaultValue,
+      enabled: isEdit,
+      formKey: widget.formKey,
+      onModified: widget.onModified,
+      context: context,
+      validator: (value) => value?.isEmpty == true
+          ? 'Postal code is required'
+          : (value!.length < 5 || value.length > 10
+                ? 'Postal code must be 5-10 digits'
+                : null),
     );
   }
 }

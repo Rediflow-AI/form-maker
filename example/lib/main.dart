@@ -1388,7 +1388,8 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
           // Operating Hours Section with Days as Rows layout
           workingHoursFormEntry(
             title: "Operating Hours (Days as Rows)",
-            subTitle: "Set the hospital's visiting hours and operating schedule",
+            subTitle:
+                "Set the hospital's visiting hours and operating schedule",
             onChanged: (hours) {
               setState(() {
                 operatingHours = hours;

@@ -20,7 +20,7 @@ class _HoursAsRowsGridState extends State<HoursAsRowsGrid> {
   late ScrollController _verticalController;
   late ScrollController _horizontalHeaderController;
   late ScrollController _verticalHeaderController;
-  
+
   bool _isUpdatingHorizontal = false;
   bool _isUpdatingVertical = false;
 
