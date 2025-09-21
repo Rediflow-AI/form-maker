@@ -6,10 +6,10 @@ class SecondaryFlatButton extends StatelessWidget {
   final Widget child;
 
   const SecondaryFlatButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +29,10 @@ class TertiaryIconButton extends StatelessWidget {
   final IconData iconData;
 
   const TertiaryIconButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.iconData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +41,8 @@ class TertiaryIconButton extends StatelessWidget {
       icon: Icon(iconData),
       style: IconButton.styleFrom(
         backgroundColor: onPressed != null
-            ? primaryActiveColor.withOpacity(0.1)
-            : Colors.grey.withOpacity(0.1),
+            ? primaryActiveColor.withValues(alpha: 0.1)
+            : Colors.grey.withValues(alpha: 0.1),
         foregroundColor: onPressed != null ? primaryActiveColor : Colors.grey,
       ),
     );
@@ -54,10 +54,10 @@ class TertiaryFlatButton extends StatelessWidget {
   final Widget child;
 
   const TertiaryFlatButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class TertiaryFlatButton extends StatelessWidget {
       onPressed: onPressed,
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: primaryBorderRadius),
-        backgroundColor: primaryActiveColor.withOpacity(0.1),
+        backgroundColor: primaryActiveColor.withValues(alpha: 0.1),
       ),
       child: child,
     );

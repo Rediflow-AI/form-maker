@@ -1,5 +1,3 @@
-library form_maker;
-
 // Export the main form classes
 export 'form_maker.dart' show InfoForm, InfoFormState;
 

@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,13 +18,10 @@ import 'widgets/text_form_entries.dart';
 import 'widgets/selection_form_entries.dart';
 import 'widgets/interactive_form_entries.dart';
 import 'widgets/media_form_entries.dart';
-import 'utils/constants.dart';
-import 'utils/extensions.dart';
-import 'utils/input_styles.dart';
 
 /// Abstract base class for creating forms with consistent styling and functionality
 abstract class InfoForm extends StatefulWidget {
-  InfoForm({
+  const InfoForm({
     super.key,
     this.onImageSelected,
     required this.formKey,
@@ -340,17 +336,17 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
   }
 
   /// Generic radio button form field
-  Widget radioButtonFormEntry<T>({
+  Widget radioButtonFormEntry<R>({
     String title = 'Radio Selection',
     String subTitle = 'Choose one option',
-    required List<T> options,
-    required String Function(T) getDisplayText,
-    required Function(T?) onChanged,
-    T? defaultValue,
-    String? Function(T?)? validator,
+    required List<R> options,
+    required String Function(R) getDisplayText,
+    required Function(R?) onChanged,
+    R? defaultValue,
+    String? Function(R?)? validator,
     bool isRequired = false,
   }) {
-    return SelectionFormEntries.radioButtonFormEntry<T>(
+    return SelectionFormEntries.radioButtonFormEntry<R>(
       title: title,
       subTitle: subTitle,
       options: options,
