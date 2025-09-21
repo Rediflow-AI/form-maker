@@ -18,6 +18,7 @@ export 'widgets/phone_field.dart';
 export 'widgets/selection_form_entries.dart';
 export 'widgets/text_form_entries.dart';
 export 'widgets/working_hours_selector.dart';
+export 'widgets/working_hours_models.dart';
 
 // Export utilities
 export 'utils/constants.dart';

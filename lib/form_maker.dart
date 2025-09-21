@@ -24,6 +24,7 @@ import 'widgets/buttons.dart';
 import 'widgets/expandable_dropdown_textfield.dart';
 import 'widgets/phone_field.dart';
 import 'widgets/working_hours_selector.dart';
+import 'widgets/working_hours_models.dart';
 
 abstract class InfoForm extends StatefulWidget {
   InfoForm({
@@ -989,6 +990,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
     String subTitle = 'the working hours',
     Function(List<WorkingHour>)? onChanged,
     List<WorkingHour>? defaultValue,
+    WorkingHoursLayout layout = WorkingHoursLayout.daysAsRows,
   }) {
     return formEntry(
       title: title,
@@ -1003,6 +1005,7 @@ abstract class InfoFormState<T extends InfoForm> extends State<T> {
           }
         },
         workingHours: defaultValue,
+        layout: layout,
       ),
     );
   }
