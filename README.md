@@ -14,7 +14,7 @@ A comprehensive Flutter package for creating beautiful and functional forms with
 - **Image Picker Integration**: Easy profile picture and image selection with support for multiple images
 - **Address Fields**: Complete address input with validation
 - **Phone Number Fields**: International phone number support with country codes
-- **Working Hours Selector**: Interactive grid-based working hours configuration
+- **Working Hours Selector**: Interactive grid-based working hours configuration with dual layout support (days-as-rows or hours-as-rows)
 - **Multi-Select Options**: Chip-based and list-based multi-selection fields
 - **Radio Button Groups**: Easy radio button form entries with custom types
 - **Single Select Dropdowns**: Customizable dropdown selection fields
@@ -231,15 +231,36 @@ WorkingHoursWidget(
     });
   },
   workingHours: workingHours,
+  layout: WorkingHoursLayout.daysAsRows, // Optional: choose layout orientation
+)
+```
+
+#### Layout Options
+
+You can choose between two layout orientations:
+
+```dart
+// Default: Days as rows, hours as columns (traditional calendar view)
+WorkingHoursWidget(
+  layout: WorkingHoursLayout.daysAsRows,
+  // ... other properties
+)
+
+// Alternative: Hours as rows, days as columns (timeline view)
+WorkingHoursWidget(
+  layout: WorkingHoursLayout.hoursAsRows,
+  // ... other properties
 )
 ```
 
 Features:
+- **Dual Layout Support**: Choose between days-as-rows or hours-as-rows orientation
 - Interactive time grid with 24-hour slots
 - Click to select/deselect time slots
 - Handles discontinuous hours (e.g., "9-12, 14-17")
 - Shows total hours per week
-- Mobile-friendly scrollable interface
+- **Sticky Headers**: Day/hour labels remain visible while scrolling
+- Mobile-friendly responsive interface with adaptive cell sizing
 
 ### Customization
 

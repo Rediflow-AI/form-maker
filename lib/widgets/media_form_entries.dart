@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -102,7 +101,7 @@ class MediaFormEntries {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 2,
-                      shadowColor: primaryActiveColor.withOpacity(0.3),
+                      shadowColor: primaryActiveColor.withValues(alpha: 0.3),
                     ),
                   ),
                 ),

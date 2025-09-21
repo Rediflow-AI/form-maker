@@ -90,6 +90,7 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
   List<File> selectedPhotos = [];
   List<XFile> selectedXFilePhotos = []; // For web compatibility
   List<String> selectedServices = [];
+  List<WorkingHour> restaurantHours = [];
 
   // Text controllers to capture form data
   final TextEditingController nameController = TextEditingController();
@@ -323,6 +324,20 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
           ),
           SizedBox(height: 16.0),
 
+          // Restaurant Operating Hours
+          workingHoursFormEntry(
+            title: "Restaurant Hours",
+            subTitle: "When is your restaurant open for service?",
+            onChanged: (hours) {
+              setState(() {
+                restaurantHours = hours;
+              });
+            },
+            defaultValue: restaurantHours,
+            layout: WorkingHoursLayout.daysAsRows,
+          ),
+          SizedBox(height: 16.0),
+
           multiSelectFormEntry(
             title: "Service Options",
             subTitle: "What services do you offer?",
@@ -389,6 +404,9 @@ class _RestaurantFormPageState extends InfoFormState<RestaurantFormPage> {
         'Website URL': websiteController.text,
         'Cuisine Type':
             selectedCuisineType.isEmpty ? 'Not selected' : selectedCuisineType,
+        'Restaurant Hours': restaurantHours.isEmpty
+            ? 'No hours set'
+            : '${restaurantHours.where((h) => h.isOpen).length} days/week open',
         'Selected Services': selectedServices.isEmpty
             ? 'None selected'
             : selectedServices.join(', '),
@@ -1367,48 +1385,32 @@ class _HospitalFormPageState extends InfoFormState<HospitalFormPage> {
           ),
           SizedBox(height: 16.0),
 
-          // Operating Hours Section
-          Card(
-            elevation: 2,
-            margin: EdgeInsets.symmetric(vertical: 8.0),
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.access_time, color: Colors.blue),
-                      SizedBox(width: 8.0),
-                      Text(
-                        "Operating Hours",
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    "Set the hospital's visiting hours and operating schedule",
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                  ),
-                  SizedBox(height: 16.0),
-                  WorkingHoursWidget(
-                    isEnabled: true, // Always enabled for editing
-                    onChanged: (hours) {
-                      setState(() {
-                        operatingHours = hours;
-                      });
-                    },
-                    workingHours: operatingHours,
-                  ),
-                ],
-              ),
-            ),
+          // Operating Hours Section with Days as Rows layout
+          workingHoursFormEntry(
+            title: "Operating Hours (Days as Rows)",
+            subTitle:
+                "Set the hospital's visiting hours and operating schedule",
+            onChanged: (hours) {
+              setState(() {
+                operatingHours = hours;
+              });
+            },
+            defaultValue: operatingHours,
+            layout: WorkingHoursLayout.daysAsRows,
+          ),
+          SizedBox(height: 16.0),
+
+          // Operating Hours Section with Hours as Rows layout
+          workingHoursFormEntry(
+            title: "Operating Hours (Hours as Rows)",
+            subTitle: "Alternative layout - timeline view with hours as rows",
+            onChanged: (hours) {
+              setState(() {
+                operatingHours = hours; // Same data, different layout
+              });
+            },
+            defaultValue: operatingHours,
+            layout: WorkingHoursLayout.hoursAsRows,
           ),
           SizedBox(height: 16.0),
 

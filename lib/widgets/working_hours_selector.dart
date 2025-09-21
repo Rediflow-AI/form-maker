@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import 'working_hours_models.dart';
+import 'working_hours_grid_days_rows.dart';
+import 'working_hours_grid_hours_rows.dart';
 
 class WorkingHoursWidget extends StatefulWidget {
   final bool isEnabled;
   final Function(List<WorkingHour>) onChanged;
   final List<WorkingHour>? workingHours;
+  final WorkingHoursLayout layout;
 
   const WorkingHoursWidget({
     Key? key,
     required this.isEnabled,
     required this.onChanged,
     this.workingHours,
+    this.layout = WorkingHoursLayout.daysAsRows,
   }) : super(key: key);
 
   @override
@@ -23,23 +28,19 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
   @override
   void initState() {
     super.initState();
-    hours =
-        widget.workingHours ??
-        [
-          WorkingHour(day: 'Monday', isOpen: false),
-          WorkingHour(day: 'Tuesday', isOpen: false),
-          WorkingHour(day: 'Wednesday', isOpen: false),
-          WorkingHour(day: 'Thursday', isOpen: false),
-          WorkingHour(day: 'Friday', isOpen: false),
-          WorkingHour(day: 'Saturday', isOpen: false),
-          WorkingHour(day: 'Sunday', isOpen: false),
-        ];
+    hours = widget.workingHours ?? _getDefaultWorkingHours();
+  }
+
+  List<WorkingHour> _getDefaultWorkingHours() {
+    return WorkingHoursUtils.fullDayNames
+        .map((day) => WorkingHour(day: day, isOpen: false))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(8.0),
@@ -47,91 +48,97 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Working Hours',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 4.0),
-                    Text(
-                      hours.isEmpty || hours.every((h) => !h.isOpen)
-                          ? 'No working hours set'
-                          : 'Total: ${_calculateTotalHours()}h/week',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: widget.isEnabled
-                    ? () => _showWorkingHoursDialog(context)
-                    : null,
-                icon: Icon(Icons.edit, size: 16),
-                label: Text('Modify'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                ),
-              ),
-            ],
-          ),
+          _buildHeader(),
           if (hours.isNotEmpty) ...[
-            SizedBox(height: 12.0),
-            Column(
-              children: hours.map((hour) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 2.0),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 80,
-                        child: Text(
-                          hour.day.substring(0, 3),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          hour.isOpen ? _formatTimeDisplay(hour) : 'Closed',
-                          style: TextStyle(
-                            color: hour.isOpen ? Colors.black87 : Colors.grey,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+            const SizedBox(height: 12.0),
+            _buildWorkingHoursList(),
           ],
         ],
       ),
     );
   }
 
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Working Hours',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 4.0),
+              Text(
+                hours.isEmpty || hours.every((h) => !h.isOpen)
+                    ? 'No working hours set'
+                    : 'Total: ${_calculateTotalHours()}h/week',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: widget.isEnabled
+              ? () => _showWorkingHoursDialog(context)
+              : null,
+          icon: const Icon(Icons.edit, size: 16),
+          label: const Text('Modify'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWorkingHoursList() {
+    return Column(
+      children: hours.map((hour) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 80,
+                child: Text(
+                  hour.day.substring(0, 3),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  hour.isOpen ? _formatTimeDisplay(hour) : 'Closed',
+                  style: TextStyle(
+                    color: hour.isOpen ? Colors.black87 : Colors.grey,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
   String _formatTimeDisplay(WorkingHour hour) {
-    // If openTime contains time ranges (like "09:00-12:00, 14:00-17:00")
     if (hour.openTime.contains(', ')) {
-      return hour.openTime; // Already properly formatted
+      return hour.openTime;
     } else if (hour.openTime.contains('-')) {
-      return hour.openTime; // Single range, already formatted
+      return hour.openTime;
     } else {
-      // Fallback to old format
       return '${hour.openTime} - ${hour.closeTime}';
     }
   }
@@ -141,10 +148,8 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
     for (var hour in hours) {
       if (hour.isOpen) {
         try {
-          // Parse time ranges (could be multiple ranges like "09:00-12:00, 14:00-17:00")
           String timeRangesString = hour.openTime;
           if (timeRangesString.contains(', ')) {
-            // Multiple time ranges
             List<String> ranges = timeRangesString.split(', ');
             for (String range in ranges) {
               if (range.contains('-')) {
@@ -157,7 +162,6 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
               }
             }
           } else if (timeRangesString.contains('-')) {
-            // Single time range
             List<String> times = timeRangesString.split('-');
             if (times.length == 2) {
               int startHour = int.parse(times[0].split(':')[0]);
@@ -165,14 +169,12 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
               totalHours += (endHour - startHour);
             }
           } else {
-            // Fallback to old format
             int openHour = int.parse(hour.openTime.split(':')[0]);
             int closeHour = int.parse(hour.closeTime.split(':')[0]);
             totalHours += (closeHour - openHour);
           }
         } catch (e) {
-          // Default calculation if parsing fails
-          totalHours += 8; // Default 8 hours
+          totalHours += 8;
         }
       }
     }
@@ -180,92 +182,33 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
   }
 
   void _showWorkingHoursDialog(BuildContext context) {
-    print('Opening working hours dialog with ${hours.length} hours');
-
-    // Create a list of selected time slots for each day
-    Map<String, Set<int>> selectedSlots = {};
-    for (var hour in hours) {
-      selectedSlots[hour.day] = <int>{};
-      if (hour.isOpen) {
-        // Parse time ranges (could be multiple ranges like "09:00-12:00, 14:00-17:00")
-        String timeRangesString = hour.openTime;
-        if (timeRangesString.contains(', ')) {
-          // Multiple time ranges
-          List<String> ranges = timeRangesString.split(', ');
-          for (String range in ranges) {
-            if (range.contains('-')) {
-              List<String> times = range.split('-');
-              if (times.length == 2) {
-                int startHour = _timeStringToHour(times[0]);
-                int endHour = _timeStringToHour(times[1]);
-                for (int i = startHour; i < endHour; i++) {
-                  selectedSlots[hour.day]!.add(i);
-                }
-              }
-            }
-          }
-        } else if (timeRangesString.contains('-')) {
-          // Single time range
-          List<String> times = timeRangesString.split('-');
-          if (times.length == 2) {
-            int startHour = _timeStringToHour(times[0]);
-            int endHour = _timeStringToHour(times[1]);
-            for (int i = startHour; i < endHour; i++) {
-              selectedSlots[hour.day]!.add(i);
-            }
-          }
-        } else {
-          // Fallback to old format
-          int startHour = _timeStringToHour(hour.openTime);
-          int endHour = _timeStringToHour(hour.closeTime);
-          for (int i = startHour; i < endHour; i++) {
-            selectedSlots[hour.day]!.add(i);
-          }
-        }
-      }
-    }
+    Map<String, Set<int>> selectedSlots = _parseCurrentHours();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            return AlertDialog(
-              title: Row(
-                children: [
-                  Icon(Icons.access_time, color: Colors.blue),
-                  SizedBox(width: 8),
-                  Text('Working Hours'),
-                ],
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              content: SizedBox(
-                width: double.maxFinite,
-                height: 500,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SingleChildScrollView(
-                    child: _buildTimeGrid(selectedSlots, setDialogState),
-                  ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.95,
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    _buildDialogHeader(),
+                    const SizedBox(height: 20),
+                    _buildSummary(selectedSlots),
+                    const SizedBox(height: 20),
+                    Expanded(child: _buildGrid(selectedSlots, setDialogState)),
+                    const SizedBox(height: 20),
+                    _buildDialogActions(selectedSlots),
+                  ],
                 ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _saveSelectedSlots(selectedSlots);
-                    widget.onChanged(hours);
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: Text('Save'),
-                ),
-              ],
             );
           },
         );
@@ -273,168 +216,186 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
     );
   }
 
-  Widget _buildTimeGrid(
-    Map<String, Set<int>> selectedSlots,
-    StateSetter setDialogState,
-  ) {
-    final days = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ];
-    final timeSlots = List.generate(24, (index) => index); // 0-23 hours
+  Map<String, Set<int>> _parseCurrentHours() {
+    Map<String, Set<int>> selectedSlots = {};
+    for (var hour in hours) {
+      selectedSlots[hour.day] = <int>{};
+      if (hour.isOpen) {
+        String timeRangesString = hour.openTime;
+        if (timeRangesString.contains(', ')) {
+          List<String> ranges = timeRangesString.split(', ');
+          for (String range in ranges) {
+            _parseTimeRange(range, selectedSlots[hour.day]!);
+          }
+        } else if (timeRangesString.contains('-')) {
+          _parseTimeRange(timeRangesString, selectedSlots[hour.day]!);
+        } else {
+          int startHour = WorkingHoursUtils.timeStringToHour(hour.openTime);
+          int endHour = WorkingHoursUtils.timeStringToHour(hour.closeTime);
+          for (int i = startHour; i < endHour; i++) {
+            selectedSlots[hour.day]!.add(i);
+          }
+        }
+      }
+    }
+    return selectedSlots;
+  }
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        children: [
-          // Header row with time slots
-          Row(
+  void _parseTimeRange(String range, Set<int> slots) {
+    if (range.contains('-')) {
+      List<String> times = range.split('-');
+      if (times.length == 2) {
+        int startHour = WorkingHoursUtils.timeStringToHour(times[0]);
+        int endHour = WorkingHoursUtils.timeStringToHour(times[1]);
+        for (int i = startHour; i < endHour; i++) {
+          slots.add(i);
+        }
+      }
+    }
+  }
+
+  Widget _buildDialogHeader() {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.access_time, color: Colors.blue, size: 24),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Empty corner cell
-              Container(
-                width: 100,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Center(
-                  child: Text(
-                    'Day / Time',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
-                  ),
+              const Text(
+                'Working Hours',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
                 ),
               ),
-              // Time slot headers
-              ...timeSlots.map((hour) {
-                return Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${hour.toString().padLeft(2, '0')}:00',
-                      style: TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+              Text(
+                'Select your working hours by tapping time slots',
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              ),
             ],
           ),
-          // Day rows
-          ...days.map((day) {
-            return Row(
-              children: [
-                // Day label
-                Container(
-                  width: 100,
-                  height: 35,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Center(
-                    child: Text(
-                      day,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ),
-                // Time slot cells
-                ...timeSlots.map((hour) {
-                  bool isSelected = selectedSlots[day]?.contains(hour) ?? false;
-                  return GestureDetector(
-                    onTap: () {
-                      setDialogState(() {
-                        if (selectedSlots[day] == null) {
-                          selectedSlots[day] = <int>{};
-                        }
-                        if (isSelected) {
-                          selectedSlots[day]!.remove(hour);
-                        } else {
-                          selectedSlots[day]!.add(hour);
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 35,
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.blue.shade200 : Colors.white,
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.blue.shade400
-                              : Colors.grey.shade300,
-                          width: isSelected ? 2 : 1,
-                        ),
-                      ),
-                      child: isSelected
-                          ? Center(
-                              child: Icon(
-                                Icons.check,
-                                size: 16,
-                                color: Colors.blue.shade700,
-                              ),
-                            )
-                          : null,
-                    ),
-                  );
-                }).toList(),
-              ],
-            );
-          }).toList(),
+        ),
+        IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.close, color: Colors.grey),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSummary(Map<String, Set<int>> selectedSlots) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.schedule, color: Colors.blue, size: 20),
+          const SizedBox(width: 8),
+          Text(
+            'Total: ${WorkingHoursUtils.calculateSelectedHours(selectedSlots)} hours/week',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.blue.shade700,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  int _timeStringToHour(String timeString) {
-    try {
-      return int.parse(timeString.split(':')[0]);
-    } catch (e) {
-      return 9; // Default to 9 AM
+  Widget _buildGrid(
+    Map<String, Set<int>> selectedSlots,
+    StateSetter setDialogState,
+  ) {
+    void onSlotTap(String day, int hour, bool isSelected) {
+      setDialogState(() {
+        selectedSlots[day] ??= <int>{};
+        if (isSelected) {
+          selectedSlots[day]!.remove(hour);
+        } else {
+          selectedSlots[day]!.add(hour);
+        }
+      });
     }
+
+    return widget.layout == WorkingHoursLayout.daysAsRows
+        ? DaysAsRowsGrid(selectedSlots: selectedSlots, onSlotTap: onSlotTap)
+        : HoursAsRowsGrid(selectedSlots: selectedSlots, onSlotTap: onSlotTap);
   }
 
-  String _hourToTimeString(int hour) {
-    return '${hour.toString().padLeft(2, '0')}:00';
+  Widget _buildDialogActions(Map<String, Set<int>> selectedSlots) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: Colors.grey.shade300),
+              ),
+            ),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade700,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 2,
+          child: ElevatedButton(
+            onPressed: () {
+              _saveSelectedSlots(selectedSlots);
+              widget.onChanged(hours);
+              Navigator.of(context).pop();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              elevation: 0,
+            ),
+            child: const Text(
+              'Save Working Hours',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   void _saveSelectedSlots(Map<String, Set<int>> selectedSlots) {
     List<WorkingHour> newHours = [];
 
-    for (var day in [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ]) {
+    for (var day in WorkingHoursUtils.fullDayNames) {
       Set<int> slots = selectedSlots[day] ?? <int>{};
 
       if (slots.isEmpty) {
-        // Day is closed
         newHours.add(WorkingHour(day: day, isOpen: false));
       } else {
-        // Find continuous time blocks
         List<int> sortedSlots = slots.toList()..sort();
         List<String> timeRanges = [];
 
@@ -443,30 +404,24 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
 
         for (int i = 1; i < sortedSlots.length; i++) {
           if (sortedSlots[i] == end + 1) {
-            // Continuous slot
             end = sortedSlots[i];
           } else {
-            // Gap found, save the current range
             timeRanges.add(
-              '${_hourToTimeString(start)}-${_hourToTimeString(end + 1)}',
+              '${WorkingHoursUtils.hourToTimeString(start)}-${WorkingHoursUtils.hourToTimeString(end + 1)}',
             );
             start = sortedSlots[i];
             end = sortedSlots[i];
           }
         }
-        // Add the last range
         timeRanges.add(
-          '${_hourToTimeString(start)}-${_hourToTimeString(end + 1)}',
+          '${WorkingHoursUtils.hourToTimeString(start)}-${WorkingHoursUtils.hourToTimeString(end + 1)}',
         );
 
-        // Create a WorkingHour with the time ranges stored in a way we can parse
         newHours.add(
           WorkingHour(
             day: day,
-            openTime: timeRanges.join(
-              ', ',
-            ), // Store all ranges in openTime for now
-            closeTime: '', // We'll use openTime to store the full schedule
+            openTime: timeRanges.join(', '),
+            closeTime: '',
             isOpen: true,
           ),
         );
