@@ -1,6 +1,6 @@
 name: rediflow_form_maker
 description: "Package for creating forms with pre-built components including text fields, dropdowns, image pickers, address fields, phone inputs, working hours selectors, and more."
-version: 0.0.1
+version: 0.1.0
 homepage: https://github.com/Rediflow-AI/form-maker
 repository: https://github.com/Rediflow-AI/form-maker
 issue_tracker: https://github.com/Rediflow-AI/form-maker/issues
