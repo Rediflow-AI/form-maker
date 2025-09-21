@@ -230,42 +230,150 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            return AlertDialog(
-              title: Row(
-                children: [
-                  Icon(Icons.access_time, color: Colors.blue),
-                  SizedBox(width: 8),
-                  Text('Working Hours'),
-                ],
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              content: SizedBox(
-                width: double.maxFinite,
-                height: 500,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SingleChildScrollView(
-                    child: _buildTimeGrid(selectedSlots, setDialogState),
-                  ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.95,
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    // Header
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.access_time,
+                            color: Colors.blue,
+                            size: 24,
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Working Hours',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                'Select your working hours by tapping time slots',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+
+                    // Summary
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.schedule, color: Colors.blue, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Total: ${_calculateSelectedHours(selectedSlots)} hours/week',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+
+                    // Time Grid
+                    Expanded(
+                      child: _buildResponsiveTimeGrid(
+                        selectedSlots,
+                        setDialogState,
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+
+                    // Action Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: BorderSide(color: Colors.grey.shade300),
+                              ),
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          flex: 2,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _saveSelectedSlots(selectedSlots);
+                              widget.onChanged(hours);
+                              Navigator.of(context).pop();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'Save Working Hours',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _saveSelectedSlots(selectedSlots);
-                    widget.onChanged(hours);
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: Text('Save'),
-                ),
-              ],
             );
           },
         );
@@ -273,11 +381,20 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
     );
   }
 
-  Widget _buildTimeGrid(
+  int _calculateSelectedHours(Map<String, Set<int>> selectedSlots) {
+    int total = 0;
+    for (var slots in selectedSlots.values) {
+      total += slots.length;
+    }
+    return total;
+  }
+
+  Widget _buildResponsiveTimeGrid(
     Map<String, Set<int>> selectedSlots,
     StateSetter setDialogState,
   ) {
-    final days = [
+    final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    final fullDays = [
       'Monday',
       'Tuesday',
       'Wednesday',
@@ -286,121 +403,245 @@ class _WorkingHoursWidgetState extends State<WorkingHoursWidget> {
       'Saturday',
       'Sunday',
     ];
-    final timeSlots = List.generate(24, (index) => index); // 0-23 hours
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        children: [
-          // Header row with time slots
-          Row(
-            children: [
-              // Empty corner cell
-              Container(
-                width: 100,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Center(
-                  child: Text(
-                    'Day / Time',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
-                  ),
-                ),
-              ),
-              // Time slot headers
-              ...timeSlots.map((hour) {
-                return Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${hour.toString().padLeft(2, '0')}:00',
-                      style: TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate responsive dimensions
+        double availableWidth = constraints.maxWidth;
+        double cellWidth = (availableWidth - 80) / 24; // 80 for day label width
+        cellWidth = cellWidth.clamp(25.0, 45.0); // Min and max cell width
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade200),
+            borderRadius: BorderRadius.circular(8),
           ),
-          // Day rows
-          ...days.map((day) {
-            return Row(
-              children: [
-                // Day label
-                Container(
-                  width: 100,
-                  height: 35,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Center(
-                    child: Text(
-                      day,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ),
-                // Time slot cells
-                ...timeSlots.map((hour) {
-                  bool isSelected = selectedSlots[day]?.contains(hour) ?? false;
-                  return GestureDetector(
-                    onTap: () {
-                      setDialogState(() {
-                        if (selectedSlots[day] == null) {
-                          selectedSlots[day] = <int>{};
-                        }
-                        if (isSelected) {
-                          selectedSlots[day]!.remove(hour);
-                        } else {
-                          selectedSlots[day]!.add(hour);
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 35,
+          child: Column(
+            children: [
+              // Sticky Time header
+              Container(
+                height: 50,
+                child: Row(
+                  children: [
+                    // Sticky corner cell
+                    Container(
+                      width: 80,
+                      height: 50,
                       decoration: BoxDecoration(
-                        color: isSelected ? Colors.blue.shade200 : Colors.white,
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.blue.shade400
-                              : Colors.grey.shade300,
-                          width: isSelected ? 2 : 1,
+                        color: Colors.grey.shade100,
+                        border: Border(
+                          right: BorderSide(color: Colors.grey.shade300, width: 2),
+                          bottom: BorderSide(color: Colors.grey.shade300, width: 2),
+                        ),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(8),
                         ),
                       ),
-                      child: isSelected
-                          ? Center(
-                              child: Icon(
-                                Icons.check,
-                                size: 16,
-                                color: Colors.blue.shade700,
-                              ),
-                            )
-                          : null,
+                      child: Center(
+                        child: Text(
+                          'Time',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
                     ),
-                  );
-                }).toList(),
-              ],
-            );
-          }).toList(),
-        ],
-      ),
+                    // Scrollable time slots
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: List.generate(24, (hour) {
+                            bool isPeakHour = hour >= 9 && hour <= 17;
+                            return Container(
+                              width: cellWidth,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: isPeakHour
+                                    ? Colors.blue.shade50
+                                    : Colors.grey.shade50,
+                                border: Border(
+                                  right: BorderSide(color: Colors.grey.shade200),
+                                  bottom: BorderSide(color: Colors.grey.shade300, width: 2),
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '${hour.toString().padLeft(2, '0')}',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: isPeakHour
+                                          ? Colors.blue.shade700
+                                          : Colors.grey.shade600,
+                                    ),
+                                  ),
+                                  Text(
+                                    ':00',
+                                    style: TextStyle(
+                                      fontSize: 8,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Day rows with sticky first column
+              Expanded(
+                child: Row(
+                  children: [
+                    // Sticky day labels column
+                    Container(
+                      width: 80,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: days.asMap().entries.map((entry) {
+                            int dayIndex = entry.key;
+                            String day = entry.value;
+                            String fullDay = fullDays[dayIndex];
+                            
+                            return Container(
+                              width: 80,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                border: Border(
+                                  right: BorderSide(color: Colors.grey.shade300, width: 2),
+                                  bottom: BorderSide(color: Colors.grey.shade200),
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    day,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${selectedSlots[fullDay]?.length ?? 0}h',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.blue.shade600,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                    
+                    // Scrollable time slots area
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: days.asMap().entries.map((entry) {
+                              int dayIndex = entry.key;
+                              String fullDay = fullDays[dayIndex];
+
+                              return Container(
+                                height: 60,
+                                child: Row(
+                                  children: List.generate(24, (hour) {
+                                    bool isSelected =
+                                        selectedSlots[fullDay]?.contains(hour) ?? false;
+                                    bool isBusinessHour = hour >= 9 && hour <= 17;
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setDialogState(() {
+                                          if (selectedSlots[fullDay] == null) {
+                                            selectedSlots[fullDay] = <int>{};
+                                          }
+                                          if (isSelected) {
+                                            selectedSlots[fullDay]!.remove(hour);
+                                          } else {
+                                            selectedSlots[fullDay]!.add(hour);
+                                          }
+                                        });
+                                      },
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 150),
+                                        width: cellWidth,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? Colors.blue.shade100
+                                              : (isBusinessHour
+                                                    ? Colors.blue.shade50
+                                                    : Colors.white),
+                                          border: Border(
+                                            right: BorderSide(color: Colors.grey.shade200),
+                                            bottom: BorderSide(color: Colors.grey.shade200),
+                                          ),
+                                        ),
+                                        child: isSelected
+                                            ? Center(
+                                                child: Container(
+                                                  width: 20,
+                                                  height: 20,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blue,
+                                                    borderRadius:
+                                                        BorderRadius.circular(10),
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.check,
+                                                    color: Colors.white,
+                                                    size: 14,
+                                                  ),
+                                                ),
+                                              )
+                                            : (isBusinessHour
+                                                  ? Center(
+                                                      child: Container(
+                                                        width: 4,
+                                                        height: 4,
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.blue.shade200,
+                                                          borderRadius:
+                                                              BorderRadius.circular(2),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : null),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
