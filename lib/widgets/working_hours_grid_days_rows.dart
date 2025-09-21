@@ -16,13 +16,79 @@ class DaysAsRowsGrid extends StatefulWidget {
 }
 
 class _DaysAsRowsGridState extends State<DaysAsRowsGrid> {
-  final ScrollController _horizontalController = ScrollController();
-  final ScrollController _verticalController = ScrollController();
+  late ScrollController _horizontalController;
+  late ScrollController _verticalController;
+  late ScrollController _horizontalHeaderController;
+  late ScrollController _verticalHeaderController;
+  
+  bool _isUpdatingHorizontal = false;
+  bool _isUpdatingVertical = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _horizontalController = ScrollController();
+    _verticalController = ScrollController();
+    _horizontalHeaderController = ScrollController();
+    _verticalHeaderController = ScrollController();
+
+    // Sync horizontal scrolling between header and main grid
+    _horizontalController.addListener(() {
+      if (!_isUpdatingHorizontal && _horizontalHeaderController.hasClients) {
+        _isUpdatingHorizontal = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_horizontalHeaderController.hasClients) {
+            _horizontalHeaderController.jumpTo(_horizontalController.offset);
+          }
+          _isUpdatingHorizontal = false;
+        });
+      }
+    });
+
+    _horizontalHeaderController.addListener(() {
+      if (!_isUpdatingHorizontal && _horizontalController.hasClients) {
+        _isUpdatingHorizontal = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_horizontalController.hasClients) {
+            _horizontalController.jumpTo(_horizontalHeaderController.offset);
+          }
+          _isUpdatingHorizontal = false;
+        });
+      }
+    });
+
+    // Sync vertical scrolling between side labels and main grid
+    _verticalController.addListener(() {
+      if (!_isUpdatingVertical && _verticalHeaderController.hasClients) {
+        _isUpdatingVertical = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_verticalHeaderController.hasClients) {
+            _verticalHeaderController.jumpTo(_verticalController.offset);
+          }
+          _isUpdatingVertical = false;
+        });
+      }
+    });
+
+    _verticalHeaderController.addListener(() {
+      if (!_isUpdatingVertical && _verticalController.hasClients) {
+        _isUpdatingVertical = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_verticalController.hasClients) {
+            _verticalController.jumpTo(_verticalHeaderController.offset);
+          }
+          _isUpdatingVertical = false;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
     _horizontalController.dispose();
     _verticalController.dispose();
+    _horizontalHeaderController.dispose();
+    _verticalHeaderController.dispose();
     super.dispose();
   }
 
@@ -56,8 +122,9 @@ class _DaysAsRowsGridState extends State<DaysAsRowsGrid> {
           _buildCornerCell(),
           Expanded(
             child: SingleChildScrollView(
-              controller: _horizontalController,
+              controller: _horizontalHeaderController,
               scrollDirection: Axis.horizontal,
+              physics: const ClampingScrollPhysics(),
               child: Row(
                 children: List.generate(
                   24,
@@ -136,8 +203,10 @@ class _DaysAsRowsGridState extends State<DaysAsRowsGrid> {
           child: SingleChildScrollView(
             controller: _horizontalController,
             scrollDirection: Axis.horizontal,
+            physics: const ClampingScrollPhysics(),
             child: SingleChildScrollView(
               controller: _verticalController,
+              physics: const ClampingScrollPhysics(),
               child: Column(
                 children: WorkingHoursUtils.dayAbbreviations
                     .asMap()
@@ -160,7 +229,8 @@ class _DaysAsRowsGridState extends State<DaysAsRowsGrid> {
     return SizedBox(
       width: 80,
       child: SingleChildScrollView(
-        controller: _verticalController,
+        controller: _verticalHeaderController,
+        physics: const ClampingScrollPhysics(),
         child: Column(
           children: WorkingHoursUtils.dayAbbreviations.asMap().entries.map((
             entry,
